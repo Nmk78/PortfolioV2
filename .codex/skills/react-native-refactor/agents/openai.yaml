@@ -1,0 +1,7 @@
+interface:
+  display_name: "React Native Refactor"
+  short_description: "Clean Expo RN component refactors"
+  default_prompt: "Use $react-native-refactor to refactor these Expo React Native components for clarity and best practices (TypeScript + NativeWind), prioritizing React Context over Zustand."
+
+policy:
+  allow_implicit_invocation: true
