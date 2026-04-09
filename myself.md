@@ -1,0 +1,27 @@
+# Bio
+
+I grew up as a curious kid who liked testing things just to see what would happen—to understand not just *that* something works, but *how* and *why*.
+
+At first, I wanted to become a mechanical engineer like my dad. Machines fascinated me. The idea that parts could come together and move, spin, and do useful work felt amazing. But as I grew older, my curiosity started moving in different directions.
+
+Around age thirteen, I became interested in electrical engineering. I spent a lot of time playing with motors, batteries, wires, and small electronic components. I didn't understand the theory yet, but I loved experimenting. One small paragraph in my grade-six science book mentioned that wrapping a metal rod with wire and passing electricity through it makes the rod become a magnet—with no explanation of *why*.
+
+That was enough for me.
+
+I built my own electromagnet, and seeing it work was one of the most exciting moments of my childhood. But more importantly, it taught me something that's stayed with me: **understanding how something works underneath is just as satisfying as using it.** That moment planted the seed for how I'd approach learning forever—never accept an abstraction without knowing what's beneath it.
+
+Around grade seven, reading became my obsession. I devoured books and explored different ideas, philosophies, and systems. Through stories and essays, I felt I lived many lives. I questioned different ideologies and perspectives, and those years shaped my moral and ethical thinking. For a time, I even considered becoming a writer.
+
+Then in grade nine, everything shifted again.
+
+I discovered cybersecurity and it pulled me in completely. At first I was fascinated by how systems could be attacked or protected. But that curiosity evolved—I didn't just want to know *how* to attack systems, I wanted to understand how those systems were actually *built*. This shift from "how to use it" to "how does it work" naturally pulled me toward software development.
+
+Today I'm a Semester 7 student at Polytechnic University (Myeik), and I work as a full-stack engineer at TalentOS. I build modern web and mobile applications using React, Next.js, React Native with Expo, Firebase, and various backend systems.
+
+But here's what matters: I don't just *use* these abstractions—I try to understand the layers beneath them. I explore HTTP protocols, dig into package managers, trace how systems actually work underneath the frameworks I build with. This is the pattern that's defined my entire career: **leverage existing thick abstractions for productivity, but never stop asking how they actually work at deeper levels.**
+
+This approach means I build complete systems—from UI to backend logic, automation tools, and AI-powered applications. Recently I've been exploring RAG-based chatbots, automation bots, and experimental systems that combine different technologies. But in every project, I'm asking the same question I asked about that electromagnet: *How does this actually work?*
+
+I also mentor juniors, helping them improve their coding skills and guiding them through learning. The most important thing I try to teach them isn't syntax or framework patterns—it's that curiosity about the layers beneath the abstractions they're using.
+
+Looking back, my path seems like it changed many times—machines, electronics, books, cybersecurity, software. But the core has always been the same: **I'm driven by abstraction.** Not the fear of it or blind acceptance of it, but the drive to live productively *within* abstractions while understanding the architecture underneath. That's how I learn, how I build, and how I help others grow.

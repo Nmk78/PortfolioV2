@@ -86,10 +86,10 @@ export default function Projects() {
   return (
     <div ref={containerRef} className="w-full space-y-32">
       <header className="space-y-10 text-center lg:text-left">
-        <h1 className="projects-title text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] text-foreground opacity-90 uppercase mix-blend-difference">
+        <h1 className="projects-title font-sans text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] text-foreground opacity-90 uppercase mix-blend-difference transition-ui">
           Selected <br /> <span className="text-primary opacity-80">Works.</span>
         </h1>
-        <p className="project-card text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 font-light max-w-3xl leading-relaxed">
+        <p className="project-card font-sans text-xl md:text-2xl font-normal text-theme-muted max-w-3xl leading-relaxed transition-ui">
           A curated collection of digital products, experiments, and open-source contributions. Each piece is a study in logic and aesthetics.
         </p>
       </header>
@@ -104,17 +104,17 @@ export default function Projects() {
               }`}
             >
               <MagneticLink className="w-full h-full block">
-                <GlassCard hoverGlow={false} className="project-card p-12 md:p-14 flex flex-col justify-between h-full group border-foreground/10 shadow-2xl hover-target cursor-none">
+                <GlassCard hoverGlow={false} className="project-card p-12 md:p-14 flex flex-col justify-between h-full group border-foreground/10 shadow-2xl hover-target cursor-pointer transition-ui">
                   
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-0"></div>
+                  <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-ui transition-ui-slow z-0"></div>
 
                   <div className="relative z-10 flex-1 space-y-8">
-                    <h3 className={`font-black tracking-tighter text-foreground transition-colors duration-700 leading-tight ${
+                    <h3 className={`font-sans font-black tracking-tighter text-foreground transition-ui leading-tight ${
                       project.size === "large" ? "text-5xl md:text-6xl" : "text-3xl"
                     }`}>
                       {project.title}
                     </h3>
-                    <p className={`text-zinc-500 dark:text-zinc-400 leading-relaxed font-light ${
+                    <p className={`font-sans leading-relaxed font-normal text-theme-muted transition-ui ${
                       project.size === "large" ? "text-xl md:text-2xl" : "text-lg"
                     }`}>
                       {project.description}
@@ -124,20 +124,20 @@ export default function Projects() {
                   <div className="relative z-10 mt-12 space-y-12">
                     <div className="flex flex-wrap gap-4">
                       {project.tags.map((tag) => (
-                        <span key={tag} className="text-[10px] font-bold tracking-[0.2em] uppercase bg-foreground/5 text-zinc-500 px-5 py-2.5 rounded-full border border-foreground/5">
+                        <span key={tag} className="font-mono text-[10px] font-bold tracking-[0.2em] uppercase bg-foreground/5 text-theme-muted px-5 py-2.5 rounded-full border border-foreground/5 transition-ui">
                           {tag}
                         </span>
                       ))}
                     </div>
                     
                     <div className="flex items-center gap-10 pt-10 border-t border-foreground/10">
-                      <Link href={project.github} className="text-zinc-400 hover:text-foreground transition-all duration-500 group/link flex items-center gap-3">
-                        <Github className="w-5 h-5 opacity-40 group-hover/link:opacity-100" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 -translate-x-4 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all duration-700">Source</span>
+                      <Link href={project.github} className="font-mono text-theme-subtle hover:text-foreground transition-[color,opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group/link flex cursor-pointer items-center gap-3">
+                        <Github className="w-5 h-5 opacity-40 transition-opacity duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:opacity-100" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 -translate-x-4 transition-[opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:translate-x-0 group-hover/link:opacity-100">Source</span>
                       </Link>
-                      <Link href={project.link} className="text-zinc-400 hover:text-foreground transition-all duration-500 group/link flex items-center gap-3">
-                        <ExternalLink className="w-5 h-5 opacity-40 group-hover/link:opacity-100" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 -translate-x-4 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all duration-700">Explore</span>
+                      <Link href={project.link} className="font-mono text-theme-subtle hover:text-foreground transition-[color,opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group/link flex cursor-pointer items-center gap-3">
+                        <ExternalLink className="w-5 h-5 opacity-40 transition-opacity duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:opacity-100" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 -translate-x-4 transition-[opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:translate-x-0 group-hover/link:opacity-100">Explore</span>
                       </Link>
                     </div>
                   </div>

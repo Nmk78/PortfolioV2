@@ -22,8 +22,10 @@ const navItems: NavItem[] = [
 ];
 
 const EDGE_PAD = 12;
-/** Keep default placement above the home chat composer (fixed bottom). */
-const MOBILE_RISE_FROM_BOTTOM = 96;
+/** Initial mobile pill placement near top-right edge. */
+const MOBILE_TOP_OFFSET = 96;
+/** Prevent dropping the draggable pill under the fixed top navbar hit area. */
+const MOBILE_SAFE_TOP_BOUNDARY = 72;
 
 function clampPillPosition(
   x: number,
@@ -37,7 +39,7 @@ function clampPillPosition(
   const maxY = viewportH - height - EDGE_PAD;
   return {
     x: Math.round(Math.min(maxX, Math.max(EDGE_PAD, x))),
-    y: Math.round(Math.min(maxY, Math.max(EDGE_PAD, y))),
+    y: Math.round(Math.min(maxY, Math.max(MOBILE_SAFE_TOP_BOUNDARY, y))),
   };
 }
 
@@ -49,6 +51,8 @@ export function Navbar() {
   const pillRef = useRef<HTMLDivElement>(null);
   const [pillPos, setPillPos] = useState<{ x: number; y: number } | null>(null);
   const [pillReady, setPillReady] = useState(false);
+  const [isPillIdle, setIsPillIdle] = useState(false);
+  const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragRef = useRef({
     dragging: false,
     pointerId: -1,
@@ -66,8 +70,8 @@ export function Navbar() {
     const rect = el.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const startX = (vw - rect.width) / 2;
-    const startY = vh - rect.height - EDGE_PAD - MOBILE_RISE_FROM_BOTTOM;
+    const startX = vw - rect.width - EDGE_PAD;
+    const startY = MOBILE_TOP_OFFSET;
     setPillPos(clampPillPosition(startX, startY, rect.width, rect.height, vw, vh));
     setPillReady(true);
   }, []);
@@ -86,6 +90,34 @@ export function Navbar() {
     }
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const bumpPillActive = () => {
+      setIsPillIdle(false);
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+      idleTimeoutRef.current = setTimeout(() => {
+        setIsPillIdle(true);
+      }, 2000);
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      const el = pillRef.current;
+      if (!el) return;
+      const target = e.target instanceof Node ? e.target : null;
+      if (!target) return;
+      if (el.contains(target)) bumpPillActive();
+    };
+
+    bumpPillActive();
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+    };
   }, []);
 
   function onDragPointerDown(e: React.PointerEvent<HTMLButtonElement>) {
@@ -151,7 +183,7 @@ export function Navbar() {
                   <Link
                     href={item.href}
                     className={cn(
-                      "relative cursor-pointer rounded-md px-3 py-2 text-sm font-medium transition-[color] duration-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      "relative cursor-pointer rounded-md px-3 py-2 font-sans text-sm font-medium transition-ui hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                       isActive ? "text-primary" : "text-theme-subtle",
                     )}
                     aria-current={isActive ? "page" : undefined}
@@ -163,13 +195,13 @@ export function Navbar() {
             })}
           </div>
 
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 z-30">
             {mounted && (
               <>
                 <button
                   onClick={toggleEmployerMode}
                   className={cn(
-                    "inline-flex min-h-11 items-center gap-2 rounded-full border-0 px-2.5 text-xs font-semibold tracking-wide uppercase transition-[color] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:px-3 touch-manipulation",
+                    "group inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border-0 px-2.5 font-mono text-xs font-semibold tracking-wide uppercase transition-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:px-3 touch-manipulation",
                     isEmployerMode
                       ? "border-0 bg-transparent text-primary"
                       : "border-0 text-theme-muted hover:text-foreground",
@@ -182,7 +214,75 @@ export function Navbar() {
                     id="bluedot"
                     className={`h-2 w-2 shrink-0 rounded-full bg-primary ${isEmployerMode ? "animate-pulse" : "bg-transparent"}`}
                   />
-                  <span className="max-[380px]:sr-only">Recruiter</span>
+                  <span className="relative inline-flex items-center max-[380px]:sr-only">
+                    <svg
+                      viewBox="0 0 156 44"
+                      preserveAspectRatio="none"
+                      aria-hidden="true"
+                      className={cn(
+                        "pointer-events-none absolute -inset-x-5 -inset-y-4 h-[calc(100%+34px)] w-[calc(100%+42px)] transition-ui",
+                        isEmployerMode
+                          ? "text-primary opacity-95 hidden"
+                          : "text-primary/80 opacity-100",
+                      )}
+                    >
+                      <ellipse
+                        cx="78"
+                        cy="22"
+                        rx="70"
+                        ry="15.2"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        pathLength={1}
+                        className={cn(
+                          "transition-[stroke-dashoffset,opacity] duration-500 ease-out [stroke-dasharray:1] [stroke-dashoffset:1.08]",
+                          isEmployerMode
+                            ? "opacity-100 [stroke-dashoffset:0]"
+                            : "opacity-90 [stroke-dashoffset:1.08]",
+                        )}
+                      >
+                        {!isEmployerMode ? (
+                          <animate
+                            attributeName="stroke-dashoffset"
+                            values="1.08;0;1.08"
+                            dur="1.65s"
+                            repeatCount="indefinite"
+                          />
+                        ) : null}
+                      </ellipse>
+                      <ellipse
+                        cx="78"
+                        cy="22"
+                        rx="66.3"
+                        ry="13.4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.15"
+                        strokeLinecap="round"
+                        transform="rotate(-1.7 78 22)"
+                        pathLength={1}
+                        className={cn(
+                          "transition-[stroke-dashoffset,opacity] duration-700 ease-out [stroke-dasharray:1] [stroke-dashoffset:1.16]",
+                          isEmployerMode
+                            ? "opacity-80 [stroke-dashoffset:0]"
+                            : "opacity-55 [stroke-dashoffset:1.16]",
+                        )}
+                      >
+                        {!isEmployerMode ? (
+                          <animate
+                            attributeName="stroke-dashoffset"
+                            values="1.16;0;1.16"
+                            dur="1.95s"
+                            begin="0.18s"
+                            repeatCount="indefinite"
+                          />
+                        ) : null}
+                      </ellipse>
+                    </svg>
+                    <span className="relative z-10">Recruiter</span>
+                  </span>
                 </button>
 
                 <MagneticLink>
@@ -219,9 +319,25 @@ export function Navbar() {
             : { left: 0, top: 0, visibility: "hidden" as const }
         }
         className={cn(
-          "md:hidden w-min fixed z-45 flex  flex-col items-stretch overflow-hidden rounded-2xl border border-(--glass-border) bg-background/92 shadow-[0_6px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl transition-opacity duration-150 motion-reduce:transition-none dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)]",
+          "md:hidden w-min fixed z-60 flex flex-col items-stretch overflow-hidden rounded-2xl border border-(--glass-border) bg-background/92 shadow-[0_6px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl transition-opacity duration-300 motion-reduce:transition-none dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)]",
           pillReady ? "opacity-100" : "opacity-0",
+          isPillIdle ? "opacity-55" : "opacity-100",
         )}
+        onPointerDown={() => {
+          setIsPillIdle(false);
+          if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+          idleTimeoutRef.current = setTimeout(() => setIsPillIdle(true), 2000);
+        }}
+        onPointerEnter={() => {
+          setIsPillIdle(false);
+          if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+          idleTimeoutRef.current = setTimeout(() => setIsPillIdle(true), 2000);
+        }}
+        onTouchStart={() => {
+          setIsPillIdle(false);
+          if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+          idleTimeoutRef.current = setTimeout(() => setIsPillIdle(true), 2000);
+        }}
       >
         <button
           type="button"
@@ -245,7 +361,7 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "block min-h-10 w-min text-right rounded-full px-1 py-1.5 text-[0.85rem] font-medium lowercase tracking-tight transition-[color] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background [-webkit-tap-highlight-color:transparent]",
+                  "block min-h-10 w-min rounded-full px-1 py-1.5 text-right font-sans text-[0.85rem] font-medium lowercase tracking-tight transition-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background [-webkit-tap-highlight-color:transparent]",
                   isActive ? "text-primary" : "text-theme-muted hover:text-foreground",
                 )}
                 aria-current={isActive ? "page" : undefined}

@@ -1,11 +1,51 @@
 "use client";
 
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUp, ChevronDown, Clock3, MessageSquareText, Quote, Send } from "lucide-react";
+import { ExternalLink, Quote, Send, Volume2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { PixelRevealPortrait } from "@/components/ui/PixelRevealPortrait";
 import { useEmployerMode } from "@/components/ui/employer-mode-provider";
+import { StoryPathSection } from "@/components/sections/story-path-section";
+import type { HeroSegment } from "@/content/portfolio-identity";
+import {
+  heroEmployer,
+  heroNormal,
+  techStacks,
+  timelineItems,
+  valueProps,
+} from "@/content/portfolio-identity";
+
+const heroExternalLinkClass =
+  "font-semibold text-primary underline decoration-primary/45 underline-offset-[3px] transition-ui hover:decoration-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+function isExternalHref(href: string) {
+  return href.startsWith("http://") || href.startsWith("https://");
+}
+
+function HeroInlineSegments({ segments }: { segments: readonly HeroSegment[] }) {
+  return (
+    <>
+      {segments.map((part, i) =>
+        typeof part === "string" ? (
+          <span key={`hero-seg-${i}`}>{part}</span>
+        ) : (
+          <a
+            key={`${part.href}-${i}`}
+            href={part.href}
+            {...(isExternalHref(part.href)
+              ? { target: "_blank" as const, rel: "noopener noreferrer" }
+              : {})}
+            className={heroExternalLinkClass}
+          >
+            {part.label}
+          </a>
+        )
+      )}
+    </>
+  );
+}
 
 export default function Home() {
   const { isEmployerMode, setEmployerMode } = useEmployerMode();
@@ -17,6 +57,7 @@ export default function Home() {
   const chatComposerRef = useRef<HTMLTextAreaElement>(null);
   const [selectedHighlightSkills, setSelectedHighlightSkills] = useState<string[]>([]);
   const [selectedAnalysisTypes, setSelectedAnalysisTypes] = useState<string[]>([]);
+  const nameAudioRef = useRef<HTMLAudioElement | null>(null);
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([
     {
       role: "assistant",
@@ -32,6 +73,27 @@ export default function Home() {
     () => ["Match Analysis", "Key Strengths", "Impact Metrics", "Relevant Work"],
     []
   );
+
+  useEffect(() => {
+    const audio = new Audio("/name.m4a");
+    audio.preload = "auto";
+    nameAudioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+      nameAudioRef.current = null;
+    };
+  }, []);
+
+  function playNamePronunciation() {
+    const audio = nameAudioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    void audio.play().catch(() => {
+      // Ignore blocked autoplay errors; user can try again.
+    });
+  }
 
   function toggleHighlightSkill(skill: string) {
     setSelectedHighlightSkills((prev) =>
@@ -94,59 +156,33 @@ export default function Home() {
     };
   }, [isEmployerMode]);
 
-  const timelineItems = [
-    {
-      period: "2023",
-      title: "Frontend Foundation",
-      description: "Focused on React fundamentals, responsive systems, and reusable component structures."
-    },
-    {
-      period: "2024",
-      title: "Fullstack Expansion",
-      description: "Built production-ready apps with Next.js, APIs, and data modeling for real-world workflows."
-    },
-    {
-      period: "2025",
-      title: "Product & Performance",
-      description: "Shifted to UX quality, accessibility, and performance-focused engineering decisions."
-    },
-    {
-      period: "Now",
-      title: "PortfolioV2",
-      description: "Crafting a distinctive portfolio that merges engineering depth with strong visual identity."
-    }
-  ];
-
-  const techStacks = [
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Tailwind CSS",
-    "Node.js",
-    "Express",
-    "Convex",
-    "Supabase",
-    "MongoDB",
-    "PostgreSQL",
-    "Framer Motion",
-    "GSAP"
-  ];
-
   const testimonials = [
     {
       quote: "Nay shipped the interface refresh quickly and made it feel much more premium without bloating the app.",
       author: "Product Lead",
-      role: "SaaS Platform"
+      role: "SaaS Platform",
+      avatar:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=160&h=160&q=80",
+      profileUrl: "https://www.linkedin.com/",
+      profileLabel: "LinkedIn",
     },
     {
       quote: "Strong balance between code quality and UI detail. Communication was clear and implementation was reliable.",
       author: "Engineering Manager",
-      role: "Startup Team"
+      role: "Startup Team",
+      avatar:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&h=160&q=80",
+      profileUrl: "https://www.linkedin.com/",
+      profileLabel: "Portfolio",
     },
     {
       quote: "Great execution on responsive behavior and performance. The UX got cleaner and much easier to use.",
       author: "Client",
-      role: "Portfolio Project"
+      role: "Portfolio Project",
+      avatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=160&h=160&q=80",
+      profileUrl: "https://www.linkedin.com/",
+      profileLabel: "Profile",
     }
   ];
 
@@ -173,6 +209,10 @@ export default function Home() {
       "playwright",
       "docker",
       "aws",
+      "firebase",
+      "expo",
+      "react native",
+      "mobile",
     ],
     []
   );
@@ -185,6 +225,17 @@ export default function Home() {
     const score = Math.round((matched.length / recruiterSkillKeywords.length) * 100);
     return { matched, missing, score };
   }, [jdInput, recruiterSkillKeywords]);
+
+  const timelineByYear = useMemo(() => {
+    const grouped = new Map<string, Array<(typeof timelineItems)[number]>>();
+    for (const item of timelineItems) {
+      const yearKey = item.timeFrame.split(" - ")[0];
+      const prev = grouped.get(yearKey);
+      if (prev) grouped.set(yearKey, [...prev, item]);
+      else grouped.set(yearKey, [item]);
+    }
+    return Array.from(grouped.entries()).map(([year, items]) => ({ year, items }));
+  }, []);
 
   async function submitChatMessage() {
     const prompt = chatInput.trim();
@@ -256,67 +307,145 @@ export default function Home() {
 
   return (
     <div
-      className={`w-full space-y-8 pb-36 md:space-y-10 md:pb-44 ${isEmployerMode ? "employer-mode-surface" : ""}`}
+      className={`w-full texture-dots space-y-8 pb-36 md:space-y-10 md:pb-44 ${isEmployerMode ? "employer-mode-surface" : ""}`}
     >
-      <section className="scroll-shrink-section relative texture-dots rounded-3xl border-0 border-foreground/10 px-6 py-10 md:px-10 md:py-14">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="scroll-shrink-item space-y-8">
-            <div className="inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-xs font-bold tracking-[0.24em] text-primary uppercase">
-              Fullstack Engineer
+      <section className="scroll-shrink-section relative  rounded-3xl border-0 border-foreground/10 px-6 py-6 md:px-10 md:py-9">
+        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:items-center">
+          <div className="scroll-shrink-item space-y-5 md:space-y-6">
+            <div className="inline-flex items-center gap-3 cursor-drag">
+              {/* <span className="inline-block min-h-9 rounded-full border border-primary/30 bg-primary/10 px-4 py-2.5 font-mono text-xs font-bold tracking-[0.24em] text-primary uppercase transition-ui">
+                {isEmployerMode ? heroEmployer.badge : heroNormal.badge}
+              </span> */}
             </div>
-            <h1 className="text-5xl leading-[0.92] font-black tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl text-pretty">
-              Hi. I'm
+            {isEmployerMode ? (
+              <>
+                <h1 className="text-5xl leading-[0.92] font-black tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl text-pretty">
+              {heroEmployer.lead}
             </h1>
-            <span className="text-4xl leading-[0.92] font-black tracking-tighter sm:text-6xl md:text-6xl lg:text-7xl text-pretty bg-linear-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Nay Myo Khant</span>
+              <div className="flex flex-wrap relative items-center gap-2 sm:gap-3">
+                <h1 className="group/roll text-4xl leading-[0.92] font-black tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-pretty">
+                  <span className="inline-block h-[1em] overflow-hidden align-baseline">
+                    <span className="flex flex-col bg-linear-to-r from-foreground to-primary bg-clip-text text-transparent transition-transform duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/roll:-translate-y-1/2">
+                      <span className="leading-none">Nay Myo Khant</span>
+                      <span className="leading-none">Marcus</span>
+                    </span>
+                  </span>
+                </h1>
+                <button
+                  type="button"
+                  onClick={playNamePronunciation}
+                  className="group absolute -right-5 top-0 inline-flex min-h-10 min-w-10 items-center justify-center rounded-full text-theme-muted transition-ui hover:border-primary/45 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  aria-label="Play name pronunciation"
+                >
+                  <Volume2 className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+              </>
+            ) : (
+              <>
+                <h1 className="text-5xl leading-[0.92] font-black tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl text-pretty">
+                  {heroNormal.lead}
+                </h1>
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 relative">
+                  <span className="group/roll block text-4xl leading-[0.92] font-black tracking-tighter sm:text-6xl md:text-6xl lg:text-7xl text-pretty">
+                    <span className="inline-block h-[1em] overflow-hidden align-baseline">
+                      <span className="flex flex-col bg-linear-to-r from-foreground to-primary bg-clip-text text-transparent transition-transform duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/roll:-translate-y-1/2">
+                        <span className="leading-none">Nay Myo Khant</span>
+                        <span className="leading-none">Marcus</span>
+                      </span>
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={playNamePronunciation}
+                    className="group absolute -right-5 top-0 inline-flex min-h-10 min-w-10 items-center justify-center rounded-full text-theme-muted transition-ui hover:border-primary/45 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    aria-label="Play name pronunciation"
+                  >
+                    <Volume2 className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </>
+            )}
 
-            <p className="text-theme-muted max-w-2xl text-lg leading-relaxed md:text-xl">
-              I design and ship polished web products with strong frontend systems, clean architecture, and practical performance. Based in Myanmar, focused on global quality.
-            </p>
-            <div className="flex flex-col gap-4 sm:flex-row">
+            {isEmployerMode ? (
+              <p className="max-w-xl font-mono text-[13px] leading-relaxed tracking-tight text-theme-muted md:text-sm">
+                <HeroInlineSegments segments={heroEmployer.metaLine} />
+              </p>
+            ) : null}
+
+            {!isEmployerMode ? (
+              // <p
+              //   className="max-w-xl text-pretty text-lg leading-snug text-foreground md:text-xl md:leading-snug"
+              // >
+              <p className="max-w-xl font-mono text-[13px] leading-relaxed tracking-tight text-theme-muted md:text-sm">
+
+                <HeroInlineSegments segments={heroNormal.summaryLead} />
+              </p>
+            ) : null}
+            <div className="hidden md:flex flex-col gap-4 sm:flex-row ">
               <MagneticLink>
                 <Link
                   href="/contact"
-                  className="min-h-12 rounded-full bg-foreground px-8 py-4 font-bold text-background transition-colors duration-200 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className="min-h-10 rounded-full bg-foreground px-5 py-2.5 font-bold text-background transition-ui hover:opacity-90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
-                  Start a Project
+                  Download CV
                 </Link>
               </MagneticLink>
-              <MagneticLink>
+              {/* <MagneticLink>
                 <Link
                   href="/projects"
-                  className="min-h-12 rounded-full border border-foreground/20 px-8 py-4 font-bold text-foreground transition-colors duration-200 hover:border-foreground/40 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className="min-h-12 rounded-full border border-foreground/20 px-8 py-4 font-bold text-foreground transition-ui hover:border-foreground/40 hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   View Projects
                 </Link>
-              </MagneticLink>
+              </MagneticLink> */}
             </div>
           </div>
 
-          <div className="scroll-shrink-item space-y-4 w-full pb-20">
-            <PixelRevealPortrait
-              src="/potrait.svg"
-              alt="Stylized portrait artwork of Nay Myo Khant"
-              width={720}
-              height={900}
-              priority
-              className="w-full max-w-[min(100%,28rem)] mx-auto sm:max-w-none scale-100 sm:scale-110 md:scale-125"
-            />
-            <p className="text-theme-muted hidden mb-40 text-sm leading-relaxed">
-              A pixel-assembly portrait sequence that reflects my style: technical precision with artistic intent.
-            </p>
+          <div className="scroll-shrink-item flex w-full flex-col items-center justify-center lg:-mt-2">
+            <div className="relative w-full max-w-[min(100%,26rem)] sm:max-w-md md:max-w-lg lg:max-w-none lg:translate-y-[-4%]">
+              <PixelRevealPortrait
+                src="/potrait.svg"
+                alt="Stylized portrait artwork of Nay Myo Khant"
+                width={720}
+                height={900}
+                priority
+                className="w-full scale-90"
+              />
+
+            </div>
+            <div className="flex flex-col md:hidden gap-4 sm:flex-row absolute bottom-15 md:bottom-10">
+              <MagneticLink>
+                <Link
+                  href="/contact"
+                  className="min-h-8 rounded-full bg-foreground px-4 py-2 font-bold text-background transition-ui hover:opacity-90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  Download CV
+                </Link>
+              </MagneticLink>
+              {/* <MagneticLink>
+                <Link
+                  href="/projects"
+                  className="min-h-12 rounded-full border border-foreground/20 px-8 py-4 font-bold text-foreground transition-ui hover:border-foreground/40 hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  View Projects
+                </Link>
+              </MagneticLink> */}
+            </div>
           </div>
         </div>
       </section>
 
+      {!isEmployerMode ? <StoryPathSection /> : null}
 
       <section className="scroll-shrink-section rounded-3xl border-0 border-foreground/10 p-6 md:p-10">
         <h2 className="text-3xl font-black tracking-tight md:text-5xl">Tech Stacks</h2>
-        <p className="text-theme-muted mt-3 max-w-2xl">Tools I use to build robust, scalable, and polished digital products.</p>
+        <p className="text-theme-muted mt-3 max-w-xl text-sm md:text-base">Tools I actually ship with.</p>
         <div className="mt-8 flex flex-wrap gap-3">
           {techStacks.map((stack) => (
             <span
               key={stack}
-              className="text-theme-muted inline-flex min-h-11 items-center rounded-full border border-foreground/15 bg-foreground/3 px-4 py-2 text-sm font-semibold"
+              className="text-theme-muted inline-flex min-h-11 items-center rounded-full border border-foreground/15 bg-foreground/3 px-4 py-2 font-sans text-sm font-semibold transition-ui hover:border-foreground/30 hover:bg-foreground/6"
             >
               {stack}
             </span>
@@ -324,27 +453,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scroll-shrink-section texture-dots rounded-3xl border-0 border-foreground/10 p-6 md:p-10">
+      <section className="scroll-shrink-section  rounded-3xl border-0 border-foreground/10 p-6 md:p-10">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <h2 className="text-3xl font-black tracking-tight md:text-5xl">What I Bring</h2>
           {/* <p className="text-theme-muted max-w-xl">Beyond visuals: maintainable systems, performance-first UX, and shipping discipline from concept to production.</p> */}
         </div>
         <div className="grid gap-0 md:grid-cols-3">
-          {[
-            {
-              title: "Frontend Systems",
-              desc: "Scalable component architecture, design consistency, and thoughtful interactions that feel premium without slowing down.",
-            },
-            {
-              title: "Performance Focus",
-              desc: "Optimized motion, lean rendering paths, and practical improvements that keep UX smooth on real-world devices.",
-            },
-            {
-              title: "Product Mindset",
-              desc: "Clear communication, fast iteration, and delivery aligned with user outcomes rather than just technical output.",
-            },
-          ].map((item) => (
-            <article key={item.title} className="scroll-shrink-item space-y-4 p-6 md:p-8">
+          {valueProps.map((item) => (
+            <article
+              key={item.title}
+              className="scroll-shrink-item space-y-4 p-6 transition-ui md:p-8 hover:bg-foreground/2"
+            >
               <h3 className="text-xl font-bold tracking-tight">{item.title}</h3>
               <p className="text-theme-muted leading-relaxed">{item.desc}</p>
             </article>
@@ -371,7 +490,7 @@ export default function Home() {
           </ul>
         </div>
 
-        <aside className="scroll-shrink-item texture-dots rounded-3xl border border-foreground/10 p-6 md:p-10">
+        <aside className="scroll-shrink-item  rounded-3xl border border-foreground/10 p-6 md:p-10">
           <p className="text-xs font-bold tracking-[0.22em] text-primary uppercase">Currently</p>
           <h3 className="mt-3 text-2xl font-black tracking-tight md:text-3xl text-pretty">Exploring advanced interface motion with strong accessibility defaults.</h3>
           <p className="text-theme-muted mt-5 leading-relaxed">
@@ -387,22 +506,52 @@ export default function Home() {
       </section> */}
 
 
-      <section className="scroll-shrink-section texture-dots rounded-3xl border-0 border-foreground/10 p-6 md:p-10">
-        <div className="mb-8 flex items-center gap-3">
-          <h2 className="text-3xl font-black tracking-tight md:text-5xl">Timeline</h2>
+      <section className="scroll-shrink-section relative overflow-hidden rounded-3xl border-0 border-foreground/10 p-6 md:p-10">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-0 dark:opacity-100"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 16% 18%, rgba(255,255,255,0.06), transparent 44%), radial-gradient(circle at 82% 14%, rgba(59,130,246,0.08), transparent 34%), radial-gradient(circle at 68% 80%, rgba(255,255,255,0.035), transparent 40%), linear-gradient(to bottom, rgba(255,255,255,0.02), transparent 24%)",
+          }}
+        />
+
+        <div className="mb-8 md:mb-10">
+          <h2 className="font-display text-[clamp(1.8rem,4.2vw,3rem)] font-medium tracking-tight text-foreground">Experience</h2>
         </div>
-        <div className="relative mt-10">
-          <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-foreground/15 md:block" />
-          <div className="space-y-7">
-            {timelineItems.map((item, index) => (
-              <div key={item.title} className={`relative grid gap-4 md:grid-cols-2 ${index % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
-                <div className="hidden md:block" />
-                <article className="scroll-shrink-item rounded-2xl border border-foreground/10 bg-background/65 p-5 md:max-w-[95%]">
-                  <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase">{item.period}</p>
-                  <h3 className="mt-2 text-xl font-bold tracking-tight">{item.title}</h3>
-                  <p className="text-theme-muted mt-3 leading-relaxed">{item.description}</p>
-                </article>
-                <span className="absolute left-1/2 top-7 hidden h-3 w-3 -translate-x-1/2 rounded-full bg-primary md:block" />
+
+        <div className="relative">
+          <div id="timeline-line" className="pointer-events-none absolute left-[4.4rem] top-1 h-[calc(100%-0.5rem)] w-px bg-foreground/16 md:left-[5.8rem]" />
+
+          <div className="space-y-8 md:space-y-9">
+            {timelineByYear.map(({ year, items }) => (
+              <div key={year} className="grid grid-cols-[3.9rem_1fr] gap-x-5 md:grid-cols-[5.2rem_1fr] md:gap-x-8">
+                <div className="text-right">
+                  <p className="font-mono text-[1.9rem] leading-none tracking-[-0.02em] text-foreground/55 md:text-[2.2rem]">{year}</p>
+                </div>
+
+                <div className="space-y-4 md:space-y-5">
+                  {items.map((item) => (
+                    <article
+                      key={`${item.title}-${item.company}-${item.timeFrame}`}
+                      className="scroll-shrink-item group relative pl-4 md:pl-5"
+                    >
+                      <span id="timeline-dot" className="absolute -left-[1.1rem] top-2 h-3 w-3 rounded-full bg-foreground/35 transition-ui group-hover:bg-foreground/65 md:-left-[1.78rem]" />
+
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="text-[1.06rem] font-semibold tracking-tight text-foreground md:text-[1.16rem]">{item.title}</h3>
+                        <p className="shrink-0 font-mono text-[10px] tracking-[0.12em] text-primary/80 md:text-[11px]">
+                          {item.timeFrame}
+                        </p>
+                      </div>
+
+                      <p className="mt-0.5 font-mono text-[10px] tracking-widest text-theme-subtle underline decoration-foreground/25 underline-offset-[3px] md:text-[11px]">
+                        {item.company}
+                      </p>
+                      <p className="text-theme-muted mt-2.5 max-w-[74ch] text-[0.97rem] leading-relaxed md:text-base">{item.description}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -410,21 +559,48 @@ export default function Home() {
       </section>
 
 
-      <section className="scroll-shrink-section texture-dots rounded-3xl border-0 border-foreground/10 p-6">
-        <div className="mb-8 flex items-center gap-3">
-          <Quote className="h-5 w-5 text-primary" aria-hidden="true" />
-          <h2 className="text-3xl font-black tracking-tight md:text-5xl">Testimonials</h2>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {testimonials.map((item) => (
-            <article key={item.author + item.role} className="scroll-shrink-item rounded-2xl border border-foreground/10 bg-background/70 p-6">
-              <p className="text-theme-muted leading-relaxed">&ldquo;{item.quote}&rdquo;</p>
-              <p className="mt-5 text-sm font-bold text-foreground">{item.author}</p>
-              <p className="text-theme-subtle text-sm">{item.role}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      {!isEmployerMode ? (
+        <section className="scroll-shrink-section  rounded-3xl border-0 border-foreground/10 p-6">
+          <div className="mb-8 flex items-center gap-3">
+            <Quote className="h-5 w-5 text-primary" aria-hidden="true" />
+            <h2 className="text-3xl font-black tracking-tight md:text-5xl">Testimonials</h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {testimonials.map((item) => (
+              <article
+                key={item.author + item.role}
+                className="scroll-shrink-item rounded-2xl border border-foreground/10 bg-background/70 p-6 transition-ui hover:border-foreground/18"
+              >
+                <p className="text-theme-muted leading-relaxed">&ldquo;{item.quote}&rdquo;</p>
+                <div className="mt-5 flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Image
+                      src={item.avatar}
+                      alt={`${item.author} profile`}
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-full object-cover ring-1 ring-foreground/15"
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-foreground">{item.author}</p>
+                      <p className="text-theme-subtle truncate text-sm">{item.role}</p>
+                    </div>
+                  </div>
+                  <a
+                    href={item.profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-foreground/14 px-3 font-mono text-[10px] font-semibold tracking-[0.14em] text-theme-subtle uppercase transition-ui hover:border-foreground/25 hover:text-foreground"
+                  >
+                    {item.profileLabel}
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <div
         ref={chatDockRootRef}
@@ -439,7 +615,7 @@ export default function Home() {
             <div className="p-4 md:p-5">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h3 className="font-serif text-lg font-semibold tracking-tight text-foreground md:text-xl">
+                  <h3 className="font-display text-lg font-semibold tracking-tight text-foreground md:text-xl">
                     {isEmployerMode ? "AI Job Match Analysis" : "Portfolio assistant"}
                   </h3>
                   <p className="font-mono text-theme-muted mt-1 max-w-md text-[11px] leading-relaxed md:text-xs">

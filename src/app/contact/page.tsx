@@ -34,11 +34,11 @@ export default function Contact() {
   return (
     <div ref={containerRef} className="w-full space-y-20 pb-20 pt-10 min-h-screen">
       <header className="mb-16 text-center lg:text-left flex flex-col items-center lg:items-start relative">
-        <h1 className="contact-title text-[5rem] md:text-[8rem] lg:text-[10rem] font-black leading-none tracking-tighter mb-6 text-foreground opacity-90">
+        <h1 className="contact-title font-sans text-[5rem] md:text-[8rem] lg:text-[10rem] font-black leading-none tracking-tighter mb-6 text-foreground opacity-90">
           HELLO.
         </h1>
-        <p className="contact-animate text-2xl md:text-4xl text-zinc-500 dark:text-zinc-400 font-light max-w-3xl lg:max-w-4xl leading-tight">
-          Have an idea or a project in mind? Let&apos;s build something <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-medium">extraordinary</span> together.
+        <p className="contact-animate font-sans text-2xl md:text-4xl font-normal text-theme-muted max-w-3xl lg:max-w-4xl leading-tight transition-ui">
+          Have an idea or a project in mind? Let&apos;s build something <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-accent font-medium">extraordinary</span> together.
         </p>
       </header>
 
@@ -47,42 +47,42 @@ export default function Contact() {
         {/* Contact Links */}
         <div className="lg:col-span-4 space-y-6 flex flex-col contact-animate">
           <MagneticLink className="w-full">
-            <a href="mailto:naymyokhant78@gmail.com" className="w-full group hover-target block">
-              <GlassCard hoverGlow={false} className="p-8 flex flex-col gap-6 hover:bg-foreground/5 transition-colors duration-700 border-foreground/10 hover:border-primary/30 shadow-xl">
-                <div className="bg-primary/5 p-4 rounded-full text-primary w-fit transition-colors duration-700">
-                  <Mail className="w-8 h-8 opacity-70 group-hover:opacity-100 transition-opacity duration-700" />
+            <a href="mailto:naymyokhant78@gmail.com" className="w-full group hover-target block cursor-pointer">
+              <GlassCard hoverGlow={false} className="p-8 flex flex-col gap-6 hover:bg-foreground/5 border-foreground/10 hover:border-primary/30 shadow-xl transition-ui">
+                <div className="bg-primary/5 p-4 rounded-full text-primary w-fit transition-ui">
+                  <Mail className="w-8 h-8 opacity-70 group-hover:opacity-100 transition-ui" />
                 </div>
                 <div>
-                  <p className="text-sm text-zinc-500 uppercase tracking-widest font-bold mb-2">Email</p>
-                  <p className="font-semibold text-lg text-foreground">naymyokhant78@gmail.com</p>
+                  <p className="font-mono text-sm text-theme-subtle uppercase tracking-widest font-bold mb-2">Email</p>
+                  <p className="font-sans font-semibold text-lg text-foreground">naymyokhant78@gmail.com</p>
                 </div>
               </GlassCard>
             </a>
           </MagneticLink>
 
           <MagneticLink className="w-full">
-            <a href="tel:+959459133418" className="w-full group hover-target block">
-              <GlassCard hoverGlow={false} className="p-8 flex flex-col gap-6 hover:bg-foreground/5 transition-colors duration-700 border-foreground/10 hover:border-accent/30 shadow-xl">
-                <div className="bg-accent/5 p-4 rounded-full text-accent w-fit transition-colors duration-700">
-                  <Phone className="w-8 h-8 opacity-70 group-hover:opacity-100 transition-opacity duration-700" />
+            <a href="tel:+959459133418" className="w-full group hover-target block cursor-pointer">
+              <GlassCard hoverGlow={false} className="p-8 flex flex-col gap-6 hover:bg-foreground/5 border-foreground/10 hover:border-accent/30 shadow-xl transition-ui">
+                <div className="bg-accent/5 p-4 rounded-full text-accent w-fit transition-ui">
+                  <Phone className="w-8 h-8 opacity-70 group-hover:opacity-100 transition-ui" />
                 </div>
                 <div>
-                  <p className="text-sm text-zinc-500 uppercase tracking-widest font-bold mb-2">Phone</p>
-                  <p className="font-semibold text-lg text-foreground">+95 945 913 3418</p>
+                  <p className="font-mono text-sm text-theme-subtle uppercase tracking-widest font-bold mb-2">Phone</p>
+                  <p className="font-sans font-semibold text-lg text-foreground">+95 945 913 3418</p>
                 </div>
               </GlassCard>
             </a>
           </MagneticLink>
 
           <MagneticLink className="w-full">
-            <a href="https://github.com/Nmk78" target="_blank" rel="noreferrer" className="w-full group hover-target block">
-              <GlassCard hoverGlow={false} className="p-8 flex flex-col gap-6 hover:bg-foreground/5 transition-colors duration-700 border-foreground/10 hover:border-foreground/30 shadow-xl">
-                <div className="bg-foreground/5 p-4 rounded-full text-foreground w-fit transition-colors duration-700">
-                  <Github className="w-8 h-8 opacity-70 group-hover:opacity-100 transition-opacity duration-700" />
+            <a href="https://github.com/Nmk78" target="_blank" rel="noreferrer" className="w-full group hover-target block cursor-pointer">
+              <GlassCard hoverGlow={false} className="p-8 flex flex-col gap-6 hover:bg-foreground/5 border-foreground/10 hover:border-foreground/30 shadow-xl transition-ui">
+                <div className="bg-foreground/5 p-4 rounded-full text-foreground w-fit transition-ui">
+                  <Github className="w-8 h-8 opacity-70 group-hover:opacity-100 transition-ui" />
                 </div>
                 <div>
-                  <p className="text-sm text-zinc-500 uppercase tracking-widest font-bold mb-2">Social</p>
-                  <p className="font-semibold text-lg text-foreground">github.com/Nmk78</p>
+                  <p className="font-mono text-sm text-theme-subtle uppercase tracking-widest font-bold mb-2">Social</p>
+                  <p className="font-sans font-semibold text-lg text-foreground">github.com/Nmk78</p>
                 </div>
               </GlassCard>
             </a>
@@ -97,46 +97,46 @@ export default function Contact() {
             <form className="space-y-10 relative z-10" onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-4 relative group/input">
-                  <label htmlFor="name" className="text-xs uppercase tracking-widest font-bold text-zinc-500">Your Name</label>
+                  <label htmlFor="name" className="font-mono text-xs uppercase tracking-widest font-bold text-theme-subtle">Your Name</label>
                   <input 
                     id="name" 
-                    className="w-full bg-transparent border-b border-foreground/20 py-4 text-foreground text-xl placeholder-zinc-400 focus:outline-none transition-all rounded-none hover-target" 
+                    className="w-full bg-transparent border-b border-foreground/20 py-4 font-sans text-foreground text-xl placeholder:text-theme-subtle focus:outline-none transition-ui rounded-none hover-target" 
                     placeholder="John Doe" 
                   />
-                  <div className="h-[1px] w-0 bg-primary absolute bottom-0 left-0 transition-all duration-700 ease-out group-focus-within/input:w-full"></div>
+                  <div className="absolute bottom-0 left-0 h-px w-0 bg-primary transition-[width] duration-(--duration-ui-slow) ease-(--ease-ui) group-focus-within/input:w-full"></div>
                 </div>
                 <div className="space-y-4 relative group/input">
-                  <label htmlFor="email" className="text-xs uppercase tracking-widest font-bold text-zinc-500">Email Address</label>
+                  <label htmlFor="email" className="font-mono text-xs uppercase tracking-widest font-bold text-theme-subtle">Email Address</label>
                   <input 
                     id="email" 
                     type="email"
-                    className="w-full bg-transparent border-b border-foreground/20 py-4 text-foreground text-xl placeholder-zinc-400 focus:outline-none transition-all rounded-none hover-target" 
+                    className="w-full bg-transparent border-b border-foreground/20 py-4 font-sans text-foreground text-xl placeholder:text-theme-subtle focus:outline-none transition-ui rounded-none hover-target" 
                     placeholder="john@example.com" 
                   />
-                  <div className="h-[1px] w-0 bg-primary absolute bottom-0 left-0 transition-all duration-700 ease-out group-focus-within/input:w-full"></div>
+                  <div className="absolute bottom-0 left-0 h-px w-0 bg-primary transition-[width] duration-(--duration-ui-slow) ease-(--ease-ui) group-focus-within/input:w-full"></div>
                 </div>
               </div>
               <div className="space-y-4 relative group/input pt-4">
-                <label htmlFor="message" className="text-xs uppercase tracking-widest font-bold text-zinc-500">Your Message</label>
+                <label htmlFor="message" className="font-mono text-xs uppercase tracking-widest font-bold text-theme-subtle">Your Message</label>
                 <textarea 
                   id="message" 
                   rows={4}
-                  className="w-full bg-transparent border-b border-foreground/20 py-4 text-foreground text-xl placeholder-zinc-400 focus:outline-none transition-all resize-none rounded-none hover-target leading-relaxed" 
+                  className="w-full bg-transparent border-b border-foreground/20 py-4 font-sans text-foreground text-xl placeholder:text-theme-subtle focus:outline-none transition-ui resize-none rounded-none hover-target leading-relaxed" 
                   placeholder="Tell me about your project..." 
                 />
-                <div className="h-[1px] w-0 bg-primary absolute bottom-[5px] left-0 transition-all duration-700 ease-out group-focus-within/input:w-full"></div>
+                <div className="absolute bottom-[5px] left-0 h-px w-0 bg-primary transition-[width] duration-(--duration-ui-slow) ease-(--ease-ui) group-focus-within/input:w-full"></div>
               </div>
               
               <div className="pt-8">
                 <MagneticLink>
                   <button 
                     type="button"
-                    className="group relative inline-flex items-center justify-center gap-4 bg-foreground text-background font-semibold py-5 px-10 rounded-full overflow-hidden hover-target transition-all duration-500 hover:shadow-lg"
+                    className="group relative inline-flex cursor-pointer items-center justify-center gap-4 bg-foreground font-sans text-background font-semibold py-5 px-10 rounded-full overflow-hidden hover-target transition-ui transition-ui-slow hover:shadow-lg"
                   >
                     <span className="relative z-10 flex items-center gap-3 tracking-wide">
-                       Send Message <Send className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 duration-700 ease-out transition-all" />
+                       Send Message <Send className="w-4 h-4 opacity-70 transition-[opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group-hover:opacity-100 group-hover:translate-x-1" />
                     </span>
-                    <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-10 transition-opacity duration-700 ease-in-out z-0"></div>
+                    <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-10 transition-ui transition-ui-slow z-0"></div>
                   </button>
                 </MagneticLink>
               </div>

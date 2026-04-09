@@ -4,8 +4,8 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-24 border-t border-foreground/10">
-      <div className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-12 lg:px-16">
+    <footer className="mt-24 border-t border-foreground/10 transition-ui">
+      <div className="mx-auto w-full max-w-7xl px-6 py-20 sm:px-12 lg:px-16">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2 space-y-4">
             <p className="text-xl font-black tracking-tighter text-foreground">NMK.</p>
@@ -15,29 +15,29 @@ export function Footer() {
           </div>
 
           <div className="space-y-3">
-            <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase">Navigation</p>
+            <p className="font-mono text-xs font-bold tracking-[0.2em] text-primary uppercase">Navigation</p>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/" className="text-theme-muted transition-colors hover:text-foreground">Home</Link></li>
-              <li><Link href="/projects" className="text-theme-muted transition-colors hover:text-foreground">Projects</Link></li>
-              <li><Link href="/contact" className="text-theme-muted transition-colors hover:text-foreground">Contact</Link></li>
+              <li><Link href="/" className="text-theme-muted transition-ui hover:text-foreground">Home</Link></li>
+              <li><Link href="/projects" className="text-theme-muted transition-ui hover:text-foreground">Projects</Link></li>
+              <li><Link href="/contact" className="text-theme-muted transition-ui hover:text-foreground">Contact</Link></li>
             </ul>
           </div>
 
           <div className="space-y-3">
-            <p className="text-xs font-bold tracking-[0.2em] text-primary uppercase">Connect</p>
+            <p className="font-mono text-xs font-bold tracking-[0.2em] text-primary uppercase">Connect</p>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="mailto:naymyokhant.dev@gmail.com" className="text-theme-muted transition-colors hover:text-foreground">
-                  naymyokhant.dev@gmail.com
+                <a href="mailto:naymyokhant.dev@gmail.com" className="text-theme-muted transition-ui hover:text-foreground">
+                  naymyokhant78@gmail.com
                 </a>
               </li>
               <li>
-                <a href="https://github.com" target="_blank" rel="noreferrer" className="text-theme-muted transition-colors hover:text-foreground">
+                <a href="https://github.com/Nmk78" target="_blank" rel="noreferrer" className="text-theme-muted transition-ui hover:text-foreground">
                   GitHub
                 </a>
               </li>
               <li>
-                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-theme-muted transition-colors hover:text-foreground">
+                <a href="https://www.linkedin.com/in/nay-myo-khant-6760b4254" target="_blank" rel="noreferrer" className="text-theme-muted transition-ui hover:text-foreground">
                   LinkedIn
                 </a>
               </li>

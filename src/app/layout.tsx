@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,9 +12,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-story-display",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Nay Myo Khant | Portfolio",
-  description: "Personal portfolio of Nay Myo Khant, FullStack Developer.",
+  description:
+    "Nay Myo Khant — full-stack engineer at TalentOS (React, Next.js, React Native, Firebase). Portfolio with recruiter mode for a concise, skills-first view.",
 };
 
 export const viewport: Viewport = {
@@ -38,10 +46,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col pt-[max(6rem,calc(4.5rem+env(safe-area-inset-top)))] selection:bg-primary/30 selection:text-white relative bg-background text-foreground transition-colors duration-500">
+      <body className="min-h-full flex flex-col pt-[max(6rem,calc(4.5rem+env(safe-area-inset-top)))] selection:bg-primary/30 selection:text-white relative bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <EmployerModeProvider>
             <a
@@ -55,7 +63,7 @@ export default function RootLayout({
               <Navbar />
               <main
                 id="main-content"
-                className="flex-1 max-w-7xl mx-auto w-full scroll-mt-28 px-[max(1rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] sm:px-12 lg:px-16 pt-10 pb-14 relative z-10 transition-[color,background-color] duration-500"
+                className="flex-1 max-w-7xl mx-auto w-full scroll-mt-28 px-[max(1rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] sm:px-12 lg:px-16 pt-0 pb-14 relative z-10"
               >
                 {children}
               </main>

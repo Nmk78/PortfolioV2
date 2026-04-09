@@ -10,9 +10,15 @@
   --color-glass-border: var(--glass-border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Editorial only — hero hook + story pulls / tagline (Instrument Serif from layout) */
+  --font-display: var(--font-story-display);
 }
 
 :root {
+  --ease-ui: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-ui: 220ms;
+  --duration-ui-slow: 420ms;
+
   --background: #f8fafc; /* slate-50 */
   --foreground: #0f172a; /* slate-900 */
   --primary: #3b82f6; /* Electric Blue */
@@ -36,11 +42,68 @@
 }
 
 body {
+  position: relative;
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  transition:
+    background-color var(--duration-ui-slow) var(--ease-ui),
+    color var(--duration-ui-slow) var(--ease-ui);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image: url("/texture.png");
+  background-repeat: repeat;
+  background-size: 360px 360px;
+  opacity: 0.96;
+}
+
+.dark body::before {
+  opacity: 0.34;
+}
+
+/* This hide Original Cursor */
+@media (pointer: fine) {
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
+  }
+}
+
+/**
+ * Unified interactive + surface motion (theme, hovers, focus).
+ * Reduced motion: global block below short-circuits durations.
+ */
+.transition-ui {
+  transition-property: color, background-color, border-color, opacity, box-shadow, text-decoration-color,
+    outline-color;
+  transition-duration: var(--duration-ui);
+  transition-timing-function: var(--ease-ui);
+}
+
+.transition-ui-slow {
+  transition-duration: var(--duration-ui-slow);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #main-content :where(a, button, input, textarea, select, summary) {
+    transition-property: color, background-color, border-color, opacity, box-shadow, text-decoration-color,
+      outline-color, filter;
+    transition-duration: var(--duration-ui);
+    transition-timing-function: var(--ease-ui);
+  }
+
+  #main-content :where(.scroll-shrink-section) {
+    transition-property: border-color, color, background-color;
+    transition-duration: var(--duration-ui-slow);
+    transition-timing-function: var(--ease-ui);
+  }
 }
 
 .texture-grid {
@@ -74,7 +137,9 @@ body {
   opacity: var(--scroll-opacity, 1);
   transform-origin: center center;
   will-change: transform, opacity;
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+  transition:
+    transform 320ms var(--ease-ui),
+    opacity var(--duration-ui) var(--ease-ui);
 }
 
 .recruiter-switch {
@@ -94,7 +159,7 @@ body {
   height: 0.85rem;
   border-radius: 999px;
   background: var(--background);
-  transition: transform 180ms ease;
+  transition: transform var(--duration-ui) var(--ease-ui);
 }
 
 .recruiter-switch.is-on {
@@ -115,7 +180,48 @@ body {
     0 0 28px color-mix(in oklab, var(--primary) 38%, transparent),
     0 0 64px color-mix(in oklab, var(--accent) 28%, transparent),
     0 8px 40px color-mix(in oklab, var(--foreground) 12%, transparent);
-  transition: box-shadow 0.45s ease, transform 0.35s ease;
+  transition:
+    box-shadow var(--duration-ui-slow) var(--ease-ui),
+    transform var(--duration-ui-slow) var(--ease-ui);
+}
+
+/* Narrative body: newspaper columns on wide viewports only (solid rule, no fills) */
+@media (min-width: 1280px) {
+  .story-prose-columns {
+    max-width: none;
+    column-count: 1;
+    column-gap: 2.75rem;
+    column-rule: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
+  }
+}
+
+@media (max-width: 1279px) {
+  .story-prose-columns {
+    max-width: 65ch;
+  }
+}
+
+/* Story path — reveal motion (reduced-motion users: see globals media query block) */
+.story-chapter-reveal {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .story-chapter-reveal {
+    opacity: 0;
+    animation: story-chapter-in 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes story-chapter-in {
+    from {
+      opacity: 0;
+      transform: translateY(1.1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 .chat-dock-panel-enter {
@@ -145,12 +251,18 @@ body {
 
 .glass-card {
   @apply bg-(--glass) border border-(--glass-border) backdrop-blur-md rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.05)];
-  transition: background-color 0.5s ease, border-color 0.5s ease;
+  transition:
+    background-color var(--duration-ui-slow) var(--ease-ui),
+    border-color var(--duration-ui-slow) var(--ease-ui),
+    box-shadow var(--duration-ui-slow) var(--ease-ui);
 }
 
 .glass-nav {
   @apply bg-background/60 border border-(--glass-border) backdrop-blur-xl rounded-full shadow-[0_4px_30px_rgba(0,0,0,0.1)];
-  transition: background-color 0.5s ease, border-color 0.5s ease;
+  transition:
+    background-color var(--duration-ui-slow) var(--ease-ui),
+    border-color var(--duration-ui-slow) var(--ease-ui),
+    box-shadow var(--duration-ui-slow) var(--ease-ui);
 }
 
 /* Custom Scrollbar for a premium feel */
