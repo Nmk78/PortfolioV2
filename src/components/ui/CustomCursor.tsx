@@ -187,7 +187,7 @@ export function CustomCursor() {
   return (
     <div
       ref={cursorRef}
-      className={`fixed top-0 left-0 p-1 space-x-1 hidden pointer-events-none z-9999 md:flex items-center  rounded-full boorder-foreground dark:border text-[10px] font-mono tracking-wide uppercase will-change-transform transition-[opacity,background-color,border-color,color] duration-150`}
+      className={`fixed top-0 left-0 p-1 space-x-1 hidden pointer-events-none z-9999 md:flex items-center  rounded-full border-dark dark:border text-[10px] font-mono tracking-wide uppercase will-change-transform transition-[opacity,background-color,border-color,color] duration-150`}
     >
       <span className="h-2.5 w-2.5 rounded-full bg-current opacity-85" />
       <span ref={labelRef} className="whitespace-nowrap" />

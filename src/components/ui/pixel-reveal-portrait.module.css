@@ -1,6 +1,6 @@
 .wrapper {
   position: relative;
-  --portrait-filter: contrast(1.1) saturate(0.92);
+  --portrait-filter: contrast(1.3) grayscale(0.1) brightness(1.2) saturate(0.92);
 }
 
 .imageStage {

@@ -29,6 +29,81 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## RAG Backend (Vercel AI SDK + Pinecone)
+
+This project includes a Retrieval-Augmented Generation backend with:
+
+- `POST /api/rag/ingest` - chunk + embed + upsert documents into Pinecone
+- `POST /api/rag/query` - semantic retrieval from Pinecone
+- `POST /api/rag/chat` - streaming chat response grounded in retrieved context
+
+### Required environment variables
+
+```bash
+PINECONE_API_KEY=...
+PINECONE_INDEX=...
+```
+
+Optional:
+
+```bash
+RAG_AI_PROVIDER=openai # openai | google
+OPENAI_API_KEY=...
+GOOGLE_GENERATIVE_AI_API_KEY=... # or GEMINI_API_KEY
+RAG_EMBEDDING_MODEL=...
+RAG_CHAT_MODEL=...
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small # provider-specific fallback
+OPENAI_CHAT_MODEL=gpt-4o-mini # provider-specific fallback
+GOOGLE_EMBEDDING_MODEL=gemini-embedding-001 # provider-specific fallback
+GOOGLE_CHAT_MODEL=gemini-2.5-flash # provider-specific fallback
+PINECONE_NAMESPACE=default
+RAG_TOP_K=6
+RAG_CHUNK_SIZE=1200
+RAG_CHUNK_OVERLAP=200
+```
+
+### Example requests
+
+Ingest:
+
+```bash
+curl -X POST http://localhost:3000/api/rag/ingest \
+  -H "Content-Type: application/json" \
+  -d '{
+    "namespace": "portfolio",
+    "documents": [
+      {
+        "id": "about-me",
+        "text": "Your long source text here...",
+        "metadata": { "source": "site" }
+      }
+    ]
+  }'
+```
+
+Retrieve:
+
+```bash
+curl -X POST http://localhost:3000/api/rag/query \
+  -H "Content-Type: application/json" \
+  -d '{
+    "namespace": "portfolio",
+    "query": "What technologies does this developer use?",
+    "topK": 5
+  }'
+```
+
+Chat (streaming):
+
+```bash
+curl -N -X POST http://localhost:3000/api/rag/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "namespace": "portfolio",
+    "question": "Summarize the strongest projects in 4 bullets."
+  }'
+```
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

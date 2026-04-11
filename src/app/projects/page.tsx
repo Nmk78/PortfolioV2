@@ -2,151 +2,89 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { GlassCard } from "@/components/ui/GlassCard";
-import { ExternalLink } from "lucide-react";
-import { Github } from "@/components/ui/Icons";
-import Link from "next/link";
-import { MagneticLink } from "@/components/ui/MagneticLink";
+import { IgniteProjectPreview } from "@/features/projects/ignite/preview";
+import { LbmsProjectPreview } from "@/features/projects/lbms/preview";
+import { NoteProjectPreview } from "@/features/projects/note/preview";
+import { PivotProjectPreview } from "@/features/projects/pivot/preview";
+import { PuSelectionProjectPreview } from "@/features/projects/pu-selection/preview";
 
-const PROJECTS = [
-  {
-    title: "Library Management System",
-    description: "A comprehensive digital solution for managing library resources, borrowing operations and student cataloging.",
-    tags: ["Java", "SQL", "Swing"],
-    link: "#",
-    github: "#",
-    size: "large"
-  },
-  {
-    title: "IGNITE",
-    description: "An innovative web platform dedicated to educational empowerment, bridging students and tutors.",
-    tags: ["React", "Node.js", "MongoDB"],
-    link: "#",
-    github: "#",
-    size: "small"
-  },
-  {
-    title: "Online Voting System",
-    description: "A secure and transparent e-voting portal designed for seamless campus elections.",
-    tags: ["Next.js", "PostgreSQL", "Tailwind"],
-    link: "#",
-    github: "#",
-    size: "small"
-  },
-  {
-    title: "WYT-Blog",
-    description: "A sleek, MDX-powered personal blogging platform with dynamic routing.",
-    tags: ["Next.js", "MDX", "TypeScript"],
-    link: "#",
-    github: "#",
-    size: "large"
-  },
-  {
-    title: "Now Connect",
-    description: "A real-time messaging application with presence indicators and group chat features.",
-    tags: ["React Native", "Firebase"],
-    link: "#",
-    github: "#",
-    size: "small"
-  },
-  {
-    title: "Note App",
-    description: "A minimalist note-taking app with offline-first capabilities and cloud sync.",
-    tags: ["React", "Redux", "Express"],
-    link: "#",
-    github: "#",
-    size: "small"
-  }
-];
-
-export default function Projects() {
+export default function ProjectsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const root = containerRef.current;
+    if (!root) return;
+
     const ctx = gsap.context(() => {
-      gsap.from(".projects-title", {
-        y: 60,
-        opacity: 0,
-        duration: 1.5,
-        ease: "expo.out",
-      });
-      gsap.from(".project-card", {
-        y: 50,
+      gsap.from(".projects-hero-title", {
+        y: 48,
         opacity: 0,
         duration: 1.2,
-        stagger: 0.15,
         ease: "expo.out",
-        delay: 0.3
       });
-    }, containerRef);
+      gsap.from(".projects-hero-lede", {
+        y: 28,
+        opacity: 0,
+        duration: 1,
+        ease: "expo.out",
+        delay: 0.12,
+      });
+      gsap.from(".projects-section-label", {
+        y: 20,
+        opacity: 0,
+        duration: 0.85,
+        ease: "expo.out",
+        delay: 0.2,
+        stagger: 0.08,
+      });
+      gsap.from(".project-card", {
+        y: 40,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.12,
+        ease: "expo.out",
+        delay: 0.35,
+      });
+    }, root);
+
     return () => ctx.revert();
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full space-y-32">
-      <header className="space-y-10 text-center lg:text-left">
-        <h1 className="projects-title font-sans text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] text-foreground opacity-90 uppercase mix-blend-difference transition-ui">
-          Selected <br /> <span className="text-primary opacity-80">Works.</span>
+    <div ref={containerRef} className="w-full space-y-24 md:space-y-32">
+      <header className="space-y-8 text-center lg:text-left">
+        <h1 className="projects-hero-title font-sans text-6xl font-black uppercase leading-[0.85] tracking-tighter text-foreground opacity-90 mix-blend-difference transition-ui sm:text-7xl md:text-8xl lg:text-9xl">
+          Selected <br />{" "}
+          <span className="text-primary opacity-80">Works.</span>
         </h1>
-        <p className="project-card font-sans text-xl md:text-2xl font-normal text-theme-muted max-w-3xl leading-relaxed transition-ui">
-          A curated collection of digital products, experiments, and open-source contributions. Each piece is a study in logic and aesthetics.
+        <p className="projects-hero-lede mx-auto max-w-3xl font-sans text-lg font-normal leading-relaxed text-theme-foreground transition-ui md:mx-0 md:text-xl lg:text-2xl">
+          Selected shipped projects with implementation details.
         </p>
       </header>
 
-      <div className="relative z-10">
-        <div className="flex flex-wrap md:-mx-6 gap-y-16 md:gap-y-24">
-          {PROJECTS.map((project, index) => (
-            <div 
-              key={index} 
-              className={`w-full md:px-6 ${
-                project.size === "large" ? "md:w-full lg:w-3/4" : "md:w-1/2 lg:w-1/4"
-              }`}
-            >
-              <MagneticLink className="w-full h-full block">
-                <GlassCard hoverGlow={false} className="project-card p-12 md:p-14 flex flex-col justify-between h-full group border-foreground/10 shadow-2xl hover-target cursor-pointer transition-ui">
-                  
-                  <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-ui transition-ui-slow z-0"></div>
-
-                  <div className="relative z-10 flex-1 space-y-8">
-                    <h3 className={`font-sans font-black tracking-tighter text-foreground transition-ui leading-tight ${
-                      project.size === "large" ? "text-5xl md:text-6xl" : "text-3xl"
-                    }`}>
-                      {project.title}
-                    </h3>
-                    <p className={`font-sans leading-relaxed font-normal text-theme-muted transition-ui ${
-                      project.size === "large" ? "text-xl md:text-2xl" : "text-lg"
-                    }`}>
-                      {project.description}
-                    </p>
-                  </div>
-                  
-                  <div className="relative z-10 mt-12 space-y-12">
-                    <div className="flex flex-wrap gap-4">
-                      {project.tags.map((tag) => (
-                        <span key={tag} className="font-mono text-[10px] font-bold tracking-[0.2em] uppercase bg-foreground/5 text-theme-muted px-5 py-2.5 rounded-full border border-foreground/5 transition-ui">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    
-                    <div className="flex items-center gap-10 pt-10 border-t border-foreground/10">
-                      <Link href={project.github} className="font-mono text-theme-subtle hover:text-foreground transition-[color,opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group/link flex cursor-pointer items-center gap-3">
-                        <Github className="w-5 h-5 opacity-40 transition-opacity duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:opacity-100" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 -translate-x-4 transition-[opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:translate-x-0 group-hover/link:opacity-100">Source</span>
-                      </Link>
-                      <Link href={project.link} className="font-mono text-theme-subtle hover:text-foreground transition-[color,opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group/link flex cursor-pointer items-center gap-3">
-                        <ExternalLink className="w-5 h-5 opacity-40 transition-opacity duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:opacity-100" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 -translate-x-4 transition-[opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:translate-x-0 group-hover/link:opacity-100">Explore</span>
-                      </Link>
-                    </div>
-                  </div>
-                </GlassCard>
-              </MagneticLink>
-            </div>
-          ))}
+      <section className="relative z-10 space-y-10" aria-labelledby="case-studies-heading">
+        <div className="projects-section-label flex flex-col gap-3 border-b border-foreground/10 pb-6">
+          <h2
+            id="case-studies-heading"
+            className="font-mono text-[10px] font-bold uppercase tracking-[0.28em] text-theme-subtle"
+          >
+            Projects
+          </h2>
+          <p className="max-w-2xl font-sans text-sm text-theme-subtle md:text-base">
+            Current published work.
+          </p>
         </div>
-      </div>
+
+        <div className="mx-auto flex max-w-5xl flex-col gap-14 lg:gap-20">
+          <PivotProjectPreview />
+          <PuSelectionProjectPreview />
+          <NoteProjectPreview />
+          <IgniteProjectPreview />
+          <LbmsProjectPreview />
+        </div>
+      </section>
     </div>
   );
 }

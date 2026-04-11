@@ -18,6 +18,8 @@
   --ease-ui: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-ui: 220ms;
   --duration-ui-slow: 420ms;
+  /* Body copy: ~1.6–1.7 line-height for long reading (UX guideline range) */
+  --leading-body: 1.65;
 
   --background: #f8fafc; /* slate-50 */
   --foreground: #0f172a; /* slate-900 */
@@ -41,11 +43,34 @@
   color-scheme: dark;
 }
 
+/*
+ * next-themes toggles `class="dark"` on html. Tailwind `dark:` utilities often follow
+ * `prefers-color-scheme` only, which can mismatch the app theme — use this for filters
+ * that must track the actual theme (e.g. black SVG marks on dark backgrounds).
+ */
+@layer utilities {
+  .dark .invert-on-dark {
+    filter: invert(1);
+  }
+}
+
+/*
+ * Root stays 16px — do not shrink `html` globally (hurts body text + WCAG-friendly mobile minimum).
+ * Density on laptops: narrower max-width (layout) + tuned fluid type (clamp), not smaller rem root.
+ */
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   position: relative;
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: var(--leading-body);
   overflow-x: hidden;
   transition:
     background-color var(--duration-ui-slow) var(--ease-ui),
@@ -206,6 +231,14 @@ body::before {
   opacity: 1;
 }
 
+.timeline-row-reveal {
+  opacity: 1;
+}
+
+.timeline-spine-line {
+  background-color: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .story-chapter-reveal {
     opacity: 0;
@@ -220,6 +253,44 @@ body::before {
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  /* Experience timeline — row stagger + spine pulse (dots aligned via grid column) */
+  .timeline-row-reveal {
+    opacity: 0;
+    animation: timeline-row-in 0.58s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes timeline-row-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.45rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .timeline-spine-line {
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--foreground) 4%, transparent) 0%,
+      color-mix(in oklch, var(--foreground) 22%, transparent) 48%,
+      color-mix(in oklch, var(--foreground) 22%, transparent) 52%,
+      color-mix(in oklch, var(--foreground) 4%, transparent) 100%
+    );
+    animation: timeline-spine-pulse 7s ease-in-out infinite;
+  }
+
+  @keyframes timeline-spine-pulse {
+    0%,
+    100% {
+      opacity: 0.72;
+    }
+    50% {
+      opacity: 1;
     }
   }
 }
@@ -258,7 +329,7 @@ body::before {
 }
 
 .glass-nav {
-  @apply bg-background/60 border border-(--glass-border) backdrop-blur-xl rounded-full shadow-[0_4px_30px_rgba(0,0,0,0.1)];
+  @apply bg-background/60 border-none border-(--glass-border) backdrop-blur-xl rounded-none shadow-[0_4px_30px_rgba(0,0,0,0.1)];
   transition:
     background-color var(--duration-ui-slow) var(--ease-ui),
     border-color var(--duration-ui-slow) var(--ease-ui),
@@ -266,6 +337,10 @@ body::before {
 }
 
 /* Custom Scrollbar for a premium feel */
+html {
+  scroll-behavior: smooth;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }

@@ -1,0 +1,75 @@
+/* Snappy stack motion — keep fast settle, slight overshoot on cover */
+
+/* Pin stack to viewport while the left column scrolls (2-col layout). */
+.stackStickyColumn {
+  position: sticky;
+  /* ~half of (labels + stack) so the block sits near vertical center */
+  top: max(1.25rem, calc(50vh - 13rem));
+  align-self: start;
+  z-index: 2;
+  width: 100%;
+}
+
+.stackSurface {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stackCard {
+  transform: rotate(var(--stack-rot, -6deg));
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.22s ease-out,
+    opacity 0.22s ease-out;
+  will-change: transform;
+}
+
+.stackCardCoverPop {
+  animation: showcaseCoverPop 0.48s cubic-bezier(0.34, 1.2, 0.28, 1) both;
+}
+
+@keyframes showcaseCoverPop {
+  0% {
+    transform: rotate(var(--stack-rot, -6deg)) scale(0.9) translate3d(0, 10px, 0);
+    opacity: 0.72;
+    filter: brightness(1.08);
+  }
+  65% {
+    transform: rotate(var(--stack-rot, -6deg)) scale(1.035) translate3d(0, 0, 0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  100% {
+    transform: rotate(var(--stack-rot, -6deg)) scale(1) translate3d(0, 0, 0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.projectRow {
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.2s ease-out;
+}
+
+.projectRowActive {
+  transform: translate3d(6px, 0, 0);
+  box-shadow: inset 3px 0 0 color-mix(in oklab, var(--primary) 72%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stackSurface,
+  .stackCard,
+  .projectRow {
+    transition-duration: 0.01ms !important;
+  }
+
+  .stackCardCoverPop {
+    animation: none !important;
+  }
+
+  .projectRowActive {
+    transform: none;
+  }
+}
