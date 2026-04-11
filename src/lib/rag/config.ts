@@ -24,7 +24,7 @@ export const ragConfig = {
   aiProvider: getAiProvider(),
   pineconeApiKey: () => getRequiredEnv("PINECONE_API_KEY"),
   pineconeIndex: () => getRequiredEnv("PINECONE_INDEX"),
-  // openAiApiKey: () => getRequiredEnv("OPENAI_API_KEY"),
+  openAiApiKey: process.env.OPENAI_API_KEY,
   googleApiKey: () =>
     process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ??
     process.env.GEMINI_API_KEY?.trim() ??

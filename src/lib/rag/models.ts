@@ -17,7 +17,7 @@ export function getEmbeddingModel() {
     return googleProvider.embeddingModel(ragConfig.embeddingModel);
   }
 
-  ragConfig.openAiApiKey();
+  ragConfig?.openAiApiKey;
   return openAiProvider.embeddingModel(ragConfig.embeddingModel);
 }
 
@@ -27,6 +27,6 @@ export function getChatModel() {
     return googleProvider.chat(ragConfig.chatModel);
   }
 
-  ragConfig.openAiApiKey();
+  ragConfig?.openAiApiKey;
   return openAiProvider.chat(ragConfig.chatModel);
 }

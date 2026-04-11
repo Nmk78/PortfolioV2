@@ -47,3 +47,5 @@ export async function POST(request: NextRequest) {
     return jsonError("Failed to ingest documents.", 500);
   }
 }
+
+
