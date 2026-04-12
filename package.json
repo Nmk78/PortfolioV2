@@ -15,6 +15,7 @@
     "@ai-sdk/google": "^3.0.62",
     "@ai-sdk/openai": "^3.0.52",
     "@pinecone-database/pinecone": "^7.2.0",
+    "@vercel/analytics": "^2.0.1",
     "ai": "^6.0.158",
     "clsx": "^2.1.1",
     "gsap": "^3.14.2",
