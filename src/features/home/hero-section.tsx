@@ -80,7 +80,7 @@ export function HeroSection() {
   function playNamePronunciation() {
     let audio = nameAudioRef.current;
     if (!audio) {
-      audio = new Audio("/name.m4a");
+      audio = new Audio("/files/name.m4a");
       audio.preload = "metadata";
       nameAudioRef.current = audio;
     }

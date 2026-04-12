@@ -5,11 +5,10 @@ import "./globals.css";
 import { absoluteUrl, getSiteOrigin } from "@/lib/seo/site";
 import { Navbar } from "@/features/portfolio-shell/navbar";
 import { Footer } from "@/features/portfolio-shell/footer";
-import { PortfolioChatDock } from "@/features/portfolio-shell/portfolio-chat-dock";
-import { CustomCursor } from "@/components/ui/CustomCursor";
 import { SmoothScrolling } from "@/components/ui/SmoothScrolling";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { EmployerModeProvider } from "@/components/ui/employer-mode-provider";
+import { DeferredEnhancements } from "@/components/ui/deferred-enhancements";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -165,7 +164,6 @@ export default function RootLayout({
               Skip to main content
             </a>
             <SmoothScrolling>
-              <CustomCursor />
               <Navbar />
               <main
                 id="main-content"
@@ -174,7 +172,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
-              <PortfolioChatDock />
+              <DeferredEnhancements />
             </SmoothScrolling>
           </EmployerModeProvider>
         </ThemeProvider>
