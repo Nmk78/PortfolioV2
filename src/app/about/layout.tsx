@@ -16,7 +16,7 @@ export const metadata: Metadata = {
       "Learn about Nay Myo Khant's engineering background, product mindset, and collaboration style.",
     images: [
       {
-        url: absoluteUrl("/potrait.png"),
+        url: absoluteUrl("/og.webp"),
         width: 1200,
         height: 1200,
         alt: "Portrait of Nay Myo Khant",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: "About | Nay Myo Khant",
     description:
       "Engineering profile and contact details for Nay Myo Khant, full-stack software engineer.",
-    images: [absoluteUrl("/potrait.png")],
+    images: [absoluteUrl("/og.webp")],
   },
 };
 

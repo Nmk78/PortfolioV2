@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     siteName: "Nay Myo Khant Portfolio",
     images: [
       {
-        url: absoluteUrl("/potrait.png"),
+        url: absoluteUrl("/og.webp"),
         width: 1200,
         height: 1200,
         alt: "Portrait of Nay Myo Khant",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     title: "Nay Myo Khant | Full-Stack Engineer Portfolio",
     description:
       "Shipped products, case studies, and engineering work across Next.js, React Native, and AI systems.",
-    images: [absoluteUrl("/potrait.png")],
+    images: [absoluteUrl("/og.webp")],
   },
   robots: {
     index: true,
