@@ -12,6 +12,14 @@ export function HomeScrollEffects() {
     );
     if (!items.length) return;
 
+    const applyVisibilityStyles = (item: HTMLElement, visibilityRatio: number) => {
+      const clampedRatio = Math.max(0, Math.min(1, visibilityRatio));
+      const scale = 0.5 + clampedRatio * 0.5;
+      const opacity = 0.45 + clampedRatio * 0.55;
+      item.style.setProperty("--scroll-scale", scale.toFixed(3));
+      item.style.setProperty("--scroll-opacity", opacity.toFixed(3));
+    };
+
     if (isEmployerMode) {
       items.forEach((item) => {
         item.style.setProperty("--scroll-scale", "1");
@@ -20,48 +28,30 @@ export function HomeScrollEffects() {
       return;
     }
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let frame = 0;
-
-    const updateSections = () => {
-      const viewportHeight = window.innerHeight;
-
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       items.forEach((item) => {
-        const rect = item.getBoundingClientRect();
-        const visibleHeight = Math.max(
-          0,
-          Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0),
-        );
-        const baseHeight = Math.max(1, Math.min(rect.height, viewportHeight));
-        const visibilityRatio = Math.max(
-          0,
-          Math.min(1, visibleHeight / baseHeight),
-        );
-        const scale = 0.5 + visibilityRatio * 0.5;
-        const opacity = 0.45 + visibilityRatio * 0.55;
-
-        item.style.setProperty("--scroll-scale", scale.toFixed(3));
-        item.style.setProperty("--scroll-opacity", opacity.toFixed(3));
+        item.style.setProperty("--scroll-scale", "1");
+        item.style.setProperty("--scroll-opacity", "1");
       });
+      return;
+    }
 
-      frame = 0;
-    };
+    const threshold = Array.from({ length: 21 }, (_, index) => index / 20);
+    const visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          applyVisibilityStyles(entry.target as HTMLElement, entry.intersectionRatio);
+        });
+      },
+      { threshold },
+    );
 
-    const requestUpdate = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(updateSections);
-    };
+    items.forEach((item) => {
+      applyVisibilityStyles(item, 0);
+      visibilityObserver.observe(item);
+    });
 
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-    requestUpdate();
-
-    return () => {
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
+    return () => visibilityObserver.disconnect();
   }, [isEmployerMode]);
 
   return null;

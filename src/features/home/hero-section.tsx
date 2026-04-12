@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Volume2 } from "lucide-react";
 import Link from "next/link";
 import { MagneticLink } from "@/components/ui/MagneticLink";
@@ -77,21 +77,13 @@ export function HeroSection() {
   const { isEmployerMode } = useEmployerMode();
   const nameAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    const audio = new Audio("/name.m4a");
-    audio.preload = "auto";
-    nameAudioRef.current = audio;
-
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-      nameAudioRef.current = null;
-    };
-  }, []);
-
   function playNamePronunciation() {
-    const audio = nameAudioRef.current;
-    if (!audio) return;
+    let audio = nameAudioRef.current;
+    if (!audio) {
+      audio = new Audio("/name.m4a");
+      audio.preload = "metadata";
+      nameAudioRef.current = audio;
+    }
     audio.currentTime = 0;
     void audio.play().catch(() => {
       // Ignore blocked autoplay errors; user can try again.
