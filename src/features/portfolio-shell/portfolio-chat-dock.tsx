@@ -563,7 +563,7 @@ export function PortfolioChatDock() {
                       className={`relative z-10 min-h-6 whitespace-nowrap rounded-full px-2 py-1 text-center font-sans text-[9px] font-semibold uppercase tracking-wide transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/70 ${
                         dockMode === id
                           ? id === "recruiter"
-                            ? "bg-purple-400/50 text-purple-800 dark:text-purple-900"
+                            ? "bg-purple-400/50 text-purple-800 dark:text-purple-200"
                             : id === "direct"
                               ? "bg-primary/20 text-primary"
                               : "bg-foreground/12 text-foreground"

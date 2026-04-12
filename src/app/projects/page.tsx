@@ -59,7 +59,7 @@ export default function ProjectsPage() {
           Selected <br />{" "}
           <span className="text-primary opacity-80">Works.</span>
         </h1>
-        <p className="projects-hero-lede mx-auto max-w-3xl font-sans text-lg font-normal leading-relaxed text-theme-foreground transition-ui md:mx-0 md:text-xl lg:text-2xl">
+        <p className="projects-hero-lede mx-auto max-w-3xl font-sans text-lg font-normal leading-relaxed text-foreground opacity-80 transition-ui md:mx-0 md:text-xl lg:text-2xl">
           Selected shipped projects with implementation details.
         </p>
       </header>

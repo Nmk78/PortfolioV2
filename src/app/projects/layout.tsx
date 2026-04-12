@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Projects | Nay Myo Khant",
     description:
-      "Selected shipped projects and case studies by full-stack engineer Nay Myo Khant.",
+      "Selected shipped projects and case studies.",
     images: [absoluteUrl("/projects/pivot/app-mockup.webp")],
   },
 };

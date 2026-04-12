@@ -29,6 +29,8 @@ function createRequest(body: unknown, secret = "") {
 }
 
 describe("POST /api/monitor/alert", () => {
+  const originalMonitorSecret = process.env.MONITOR_ALERT_SECRET;
+
   beforeAll(async () => {
     const routeModule = await import("./route");
     POST = routeModule.POST;
@@ -36,8 +38,9 @@ describe("POST /api/monitor/alert", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
-    vi.unstubAllEnvs();
-    vi.stubEnv("MONITOR_ALERT_SECRET", "monitor-secret");
+    if (originalMonitorSecret === undefined) delete process.env.MONITOR_ALERT_SECRET;
+    else process.env.MONITOR_ALERT_SECRET = originalMonitorSecret;
+    process.env.MONITOR_ALERT_SECRET = "monitor-secret";
   });
 
   it("returns 401 when secret header is missing", async () => {

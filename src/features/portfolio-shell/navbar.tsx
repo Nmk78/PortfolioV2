@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { useTheme } from "next-themes";
 import { GripHorizontal, Moon, Sun } from "lucide-react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useEmployerMode } from "@/components/ui/employer-mode-provider";
 
 interface NavItem {
@@ -46,7 +46,7 @@ function clampPillPosition(
 
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const { isEmployerMode, toggleEmployerMode } = useEmployerMode();
   const [mounted, setMounted] = useState(false);
   const pillRef = useRef<HTMLDivElement>(null);
@@ -177,6 +177,11 @@ export function Navbar() {
     } catch {
       /* ignore */
     }
+  }
+
+  function toggleTheme() {
+    const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
+    startTransition(() => setTheme(nextTheme));
   }
 
   return (
@@ -324,14 +329,12 @@ export function Navbar() {
 
                 <MagneticLink>
                   <button
-                    onClick={() =>
-                      setTheme(theme === "dark" ? "light" : "dark")
-                    }
+                    onClick={toggleTheme}
                     className="min-h-11 min-w-11 cursor-pointer rounded-full p-2 text-foreground transition-[color,background-color] duration-200 hover:bg-black/5 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background touch-manipulation"
                     aria-label="Toggle theme"
                     type="button"
                   >
-                    {theme === "dark" ? (
+                    {resolvedTheme === "dark" ? (
                       <Sun className="h-4 w-4" aria-hidden="true" />
                     ) : (
                       <Moon className="h-4 w-4" aria-hidden="true" />

@@ -8,7 +8,7 @@ function jsonError(message: string, status: number) {
   return NextResponse.json({ success: false as const, error: message }, { status });
 }
 
-function isAuthorized(request: NextRequest): boolean {
+function hasValidMonitorSecret(request: NextRequest): boolean {
   const expectedSecret = process.env.MONITOR_ALERT_SECRET?.trim();
   if (!expectedSecret) return false;
 
@@ -16,6 +16,25 @@ function isAuthorized(request: NextRequest): boolean {
   if (!providedSecret) return false;
 
   return providedSecret === expectedSecret;
+}
+
+function hasValidCronSecret(request: NextRequest): boolean {
+  const expectedCronSecret = process.env.CRON_SECRET?.trim();
+  if (!expectedCronSecret) return false;
+
+  const authorization = request.headers.get("authorization")?.trim();
+  if (!authorization) return false;
+
+  const [scheme, token] = authorization.split(/\s+/, 2);
+  if (scheme?.toLowerCase() !== "bearer") return false;
+  if (!token) return false;
+
+  return token === expectedCronSecret;
+}
+
+function isAuthorized(request: NextRequest): boolean {
+  if (hasValidCronSecret(request)) return true;
+  return hasValidMonitorSecret(request);
 }
 
 function getMonitoredEndpoints(): string[] {

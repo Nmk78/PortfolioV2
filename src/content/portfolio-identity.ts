@@ -107,30 +107,23 @@ export const timelineItems = [
   {
     title: "Full-Stack Developer",
     company: "TalentOS",
-    timeFrame: "2024 - Present",
+    timeFrame: "2025 Dec - Present",
     description:
-      "Ship web and mobile features end-to-end, wire backend flows, and help juniors break through architecture and debugging roadblocks.",
+      "Build and maintain the backend and frontend of the TalentOS platform.",
   },
   {
-    title: "Computer Engineering Student (Semester 7)",
-    company: "Polytechnic University (Myeik)",
-    timeFrame: "2023",
+    title: "Self-taught programmer",
+    company: "",
+    timeFrame: "2020 - 2024",
     description:
-      "Run coursework in parallel with production delivery, turning classroom theory into real systems and maintainable product decisions.",
+      "I started to learn programming by myself. I learned the basics of programming and then I started to build small projects.",
   },
   {
-    title: "Security to Builder Pivot",
-    company: "Self-Directed Track",
-    timeFrame: "2022 - 2024",
+    title: "Script-Kiddy Hackavaist",
+    company: "",
+    timeFrame: "2019 - 2020",
     description:
-      "Moved from exploring how systems fail into designing how they should be built: cleaner boundaries, safer defaults, better developer ergonomics.",
-  },
-  {
-    title: "Hands-On Foundations",
-    company: "Curiosity Lab",
-    timeFrame: "2020",
-    description:
-      "Started with physical tinkering and experimentation. Built a habit of learning by touching the mechanism first, then studying the theory.",
+      "Initially I was a physical problem solver — I like fixing things with my hands. I build DIY electronics crafts but I accidentally discovered Cybersec. It pulled me in and I started to do a lot of experiments with it.",
   },
 ] as const
 

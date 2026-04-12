@@ -161,12 +161,43 @@ export default async function ProjectBySlugPage({
     inLanguage: "en",
   };
 
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: absoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Projects",
+        item: absoluteUrl("/projects"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: meta.title,
+        item: absoluteUrl(`/projects/${slug}`),
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(projectStructuredData),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbStructuredData),
         }}
       />
       {projectNode}
