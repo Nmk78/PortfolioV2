@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
-import dynamic from "next/dynamic";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { absoluteUrl, getSiteOrigin } from "@/lib/seo/site";
 import { Navbar } from "@/features/portfolio-shell/navbar";
@@ -10,11 +10,6 @@ import { CustomCursor } from "@/components/ui/CustomCursor";
 import { SmoothScrolling } from "@/components/ui/SmoothScrolling";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { EmployerModeProvider } from "@/components/ui/employer-mode-provider";
-
-const Analytics = dynamic(
-  () => import("@vercel/analytics/react").then((module) => module.Analytics),
-  { ssr: false },
-);
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
