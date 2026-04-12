@@ -9,8 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Portfolio of Nay Myo Khant, full-stack engineer focused on modern web, mobile, and AI product engineering.",
     start_url: "/",
     display: "standalone",
-    background_color: "#0b0b0b",
-    theme_color: "#0b0b0b",
+    background_color: "#f8fafc",
+    theme_color: "#3b82f6",
     icons: [
       {
         src: absoluteUrl("/potrait.png"),
