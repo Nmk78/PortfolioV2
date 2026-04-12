@@ -7,7 +7,7 @@ export function LbmsProjectPreview() {
   return (
     <Link
       href="/projects/lbms"
-      className="group/lbms relative mb-8 block overflow-hidden bg-emerald-500/8 outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="project-card group/lbms relative mb-8 block overflow-hidden bg-emerald-500/8 outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="relative aspect-video w-full">
         <Image

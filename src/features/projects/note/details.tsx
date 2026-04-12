@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, FileText, Smartphone } from "lucide-react";
 import { Github } from "@/components/ui/Icons";
+import { externalLinkProps } from "@/lib/url";
 
 const STACK = ["Expo", "TailwindCSS", "TypeScript"] as const;
 
@@ -109,6 +110,7 @@ export function NoteProjectPage() {
       <section className="flex flex-wrap gap-3 border-t border-foreground/10 pt-8">
         <a
           href={LINKS.github}
+          {...externalLinkProps(LINKS.github)}
           className="inline-flex items-center gap-2 rounded-sm border border-cyan-500/35 bg-cyan-500/10 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:bg-cyan-500/15"
         >
           <Github className="h-3.5 w-3.5" />
@@ -116,6 +118,7 @@ export function NoteProjectPage() {
         </a>
         <a
           href={LINKS.live}
+          {...externalLinkProps(LINKS.live)}
           className="inline-flex items-center gap-2 rounded-sm border border-foreground/18 bg-background px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:bg-foreground/5"
         >
           <ExternalLink className="h-3.5 w-3.5" />

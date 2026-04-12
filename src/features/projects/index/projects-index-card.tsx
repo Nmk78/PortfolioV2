@@ -5,6 +5,7 @@ import Link from "next/link";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Github } from "@/components/ui/Icons";
 import type { ProjectIndexEntry } from "@/features/projects/index/projects-index-data";
+import { externalLinkProps } from "@/lib/url";
 
 interface ProjectsIndexCardProps {
   project: ProjectIndexEntry;
@@ -62,6 +63,7 @@ export function ProjectsIndexCard({ project, variant }: ProjectsIndexCardProps) 
           <div className="flex flex-wrap items-center gap-6 border-t border-foreground/10 pt-8 md:gap-10">
             <Link
               href={project.github}
+              {...externalLinkProps(project.github)}
               className="group/link flex cursor-pointer items-center gap-3 font-mono text-theme-subtle transition-[color,opacity,transform] duration-(--duration-ui-slow) ease-(--ease-ui) hover:text-foreground"
             >
               <Github className="h-5 w-5 opacity-40 transition-opacity duration-(--duration-ui-slow) ease-(--ease-ui) group-hover/link:opacity-100" />

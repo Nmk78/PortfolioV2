@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { absoluteUrl, getSiteOrigin } from "@/lib/seo/site";
 import { Navbar } from "@/features/portfolio-shell/navbar";
@@ -9,6 +8,7 @@ import { SmoothScrolling } from "@/components/ui/SmoothScrolling";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { EmployerModeProvider } from "@/components/ui/employer-mode-provider";
 import { DeferredEnhancements } from "@/components/ui/deferred-enhancements";
+import { VercelAnalytics } from "@/components/ui/vercel-analytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -139,18 +139,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col pt-[max(6rem,calc(4.5rem+env(safe-area-inset-top)))] selection:bg-primary/30 selection:text-white relative bg-background text-foreground antialiased leading-[1.65]">
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(personStructuredData),
           }}
         />
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(websiteStructuredData),
           }}
@@ -163,7 +166,7 @@ export default function RootLayout({
             >
               Skip to main content
             </a>
-            <SmoothScrolling>
+            {/* <SmoothScrolling> */}
               <Navbar />
               <main
                 id="main-content"
@@ -173,10 +176,10 @@ export default function RootLayout({
               </main>
               <Footer />
               <DeferredEnhancements />
-            </SmoothScrolling>
+            {/* </SmoothScrolling> */}
           </EmployerModeProvider>
         </ThemeProvider>
-        <Analytics />
+        <VercelAnalytics />
       </body>
     </html>
   );

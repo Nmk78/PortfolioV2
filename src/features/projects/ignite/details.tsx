@@ -23,6 +23,7 @@ import {
 import { Github } from "@/components/ui/Icons";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { cn } from "@/lib/utils";
+import { externalLinkProps } from "@/lib/url";
 
 const STACK = [
   "Tailwind CSS",
@@ -246,6 +247,7 @@ export function IgniteProjectPage() {
           <div className="flex flex-wrap gap-3 pt-1">
             <a
               href={LINKS.github}
+              {...externalLinkProps(LINKS.github)}
               className="inline-flex items-center gap-2 rounded-sm border border-amber-500/40 bg-amber-500/12 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-amber-400/60 hover:bg-amber-500/18"
             >
               <Github className="h-3.5 w-3.5 opacity-90" />
@@ -253,6 +255,7 @@ export function IgniteProjectPage() {
             </a>
             <a
               href={LINKS.live}
+              {...externalLinkProps(LINKS.live)}
               className="inline-flex items-center gap-2 rounded-sm border border-foreground/18 bg-background/70 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-amber-500/35 hover:bg-amber-500/8"
             >
               <ExternalLink className="h-3.5 w-3.5 opacity-80" />
@@ -445,6 +448,7 @@ export function IgniteProjectPage() {
         <div className="flex flex-wrap gap-3">
           <a
             href={LINKS.github}
+            {...externalLinkProps(LINKS.github)}
             className="inline-flex items-center gap-2 rounded-sm border border-amber-500/40 bg-amber-500/12 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-amber-400/60 hover:bg-amber-500/18"
           >
             <Github className="h-3.5 w-3.5 opacity-90" />
@@ -452,6 +456,7 @@ export function IgniteProjectPage() {
           </a>
           <a
             href={LINKS.live}
+            {...externalLinkProps(LINKS.live)}
             className="inline-flex items-center gap-2 rounded-sm border border-foreground/18 bg-background/70 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-amber-500/35 hover:bg-amber-500/8"
           >
             <ExternalLink className="h-3.5 w-3.5 opacity-80" />

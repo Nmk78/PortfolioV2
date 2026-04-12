@@ -1,12 +1,16 @@
 "use client";
 
-import { useMotionValueEvent, useScroll, type MotionValue } from "motion/react";
+import { useMotionValueEvent, type MotionValue } from "motion/react";
 import type { ReactNode } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 /**
  * Aceternity-style: map page scroll progress through a target region to the
  * closest card index (see https://ui.aceternity.com/components/sticky-scroll-reveal).
+ *
+ * Only updates React state when the derived index actually changes, so scrolling
+ * does not re-render the sticky stack on every motion tick.
  */
 export function useStickyScrollIndexSync(
   scrollYProgress: MotionValue<number>,
@@ -14,15 +18,29 @@ export function useStickyScrollIndexSync(
   setActiveIndex: (i: number) => void,
   enabled = true,
 ) {
+  const lastIndexRef = useRef(-1);
+
+  const breakpoints = useMemo(
+    () =>
+      itemCount > 0
+        ? Array.from({ length: itemCount }, (_, index) => index / itemCount)
+        : [],
+    [itemCount],
+  );
+
+  useEffect(() => {
+    lastIndexRef.current = -1;
+  }, [itemCount, enabled]);
+
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (!enabled || itemCount <= 0) return;
-    const cardLength = itemCount;
-    const cardsBreakpoints = Array.from({ length: itemCount }, (_, index) => index / cardLength);
-    const closestBreakpointIndex = cardsBreakpoints.reduce((acc, breakpoint, index) => {
+    if (!enabled || breakpoints.length === 0) return;
+    const closestBreakpointIndex = breakpoints.reduce((acc, breakpoint, index) => {
       const distance = Math.abs(latest - breakpoint);
-      if (distance < Math.abs(latest - cardsBreakpoints[acc])) return index;
+      if (distance < Math.abs(latest - breakpoints[acc])) return index;
       return acc;
     }, 0);
+    if (closestBreakpointIndex === lastIndexRef.current) return;
+    lastIndexRef.current = closestBreakpointIndex;
     setActiveIndex(closestBreakpointIndex);
   });
 }

@@ -22,6 +22,7 @@ import {
 import { Github } from "@/components/ui/Icons";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { cn } from "@/lib/utils";
+import { externalLinkProps } from "@/lib/url";
 
 const STACK: readonly string[] = [
   "Python",
@@ -291,6 +292,7 @@ export function PivotProjectPage() {
               <a
                 className="inline-flex items-center gap-2 rounded-sm border border-cyan-400/45 bg-cyan-500/14 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-cyan-400/65 hover:bg-cyan-500/20"
                 href={LINK_PLACEHOLDER}
+                {...externalLinkProps(LINK_PLACEHOLDER)}
               >
                 <Github className="h-3.5 w-3.5 opacity-90" />
                 View code
@@ -298,6 +300,7 @@ export function PivotProjectPage() {
               <a
                 className="inline-flex items-center gap-2 rounded-sm border border-foreground/20 bg-background/65 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-cyan-500/35 hover:bg-cyan-500/8"
                 href={LINK_PLACEHOLDER}
+                {...externalLinkProps(LINK_PLACEHOLDER)}
               >
                 <ExternalLink className="h-3.5 w-3.5 opacity-80" />
                 Live demo
@@ -578,6 +581,7 @@ export function PivotProjectPage() {
           <a
             className="inline-flex items-center gap-2 rounded-sm border border-cyan-400/45 bg-cyan-500/14 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-cyan-400/65 hover:bg-cyan-500/20"
             href={LINK_PLACEHOLDER}
+            {...externalLinkProps(LINK_PLACEHOLDER)}
           >
             <Github className="h-3.5 w-3.5 opacity-90" />
             View code
@@ -585,6 +589,7 @@ export function PivotProjectPage() {
           <a
             className="inline-flex items-center gap-2 rounded-sm border border-foreground/20 bg-background/65 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-cyan-500/35 hover:bg-cyan-500/8"
             href={LINK_PLACEHOLDER}
+            {...externalLinkProps(LINK_PLACEHOLDER)}
           >
             <ExternalLink className="h-3.5 w-3.5 opacity-80" />
             Live demo

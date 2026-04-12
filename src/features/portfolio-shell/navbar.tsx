@@ -6,7 +6,14 @@ import { usePathname } from "next/navigation";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { useTheme } from "next-themes";
 import { GripHorizontal, Moon, Sun } from "lucide-react";
-import { startTransition, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useEmployerMode } from "@/components/ui/employer-mode-provider";
 
 interface NavItem {
@@ -18,7 +25,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: "/", label: "Home", mobileLabel: "home" },
   { href: "/projects", label: "Projects", mobileLabel: "projects" },
-  { href: "/about#contact", label: "Contact", mobileLabel: "contact" },
+  // { href: "/about#contact", label: "Contact", mobileLabel: "contact" },
   { href: "/about", label: "About", mobileLabel: "about" },
 ];
 
@@ -102,30 +109,18 @@ export function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  const bumpPillActive = useCallback(() => {
+    setIsPillIdle(false);
+    if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+    idleTimeoutRef.current = setTimeout(() => {
+      setIsPillIdle(true);
+    }, 2000);
+  }, []);
+
+  /** Fade pill after idle — avoid window `pointermove` (fires constantly during scroll). */
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const bumpPillActive = () => {
-      setIsPillIdle(false);
-      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
-      idleTimeoutRef.current = setTimeout(() => {
-        setIsPillIdle(true);
-      }, 2000);
-    };
-
-    const onPointerMove = (e: PointerEvent) => {
-      const el = pillRef.current;
-      if (!el) return;
-      const target = e.target instanceof Node ? e.target : null;
-      if (!target) return;
-      if (el.contains(target)) bumpPillActive();
-    };
-
-    bumpPillActive();
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-
+    idleTimeoutRef.current = setTimeout(() => setIsPillIdle(true), 2000);
     return () => {
-      window.removeEventListener("pointermove", onPointerMove);
       if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
     };
   }, []);
@@ -365,21 +360,9 @@ export function Navbar() {
           pillReady ? "opacity-100" : "opacity-0",
           isPillIdle ? "opacity-55" : "opacity-100",
         )}
-        onPointerDown={() => {
-          setIsPillIdle(false);
-          if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
-          idleTimeoutRef.current = setTimeout(() => setIsPillIdle(true), 2000);
-        }}
-        onPointerEnter={() => {
-          setIsPillIdle(false);
-          if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
-          idleTimeoutRef.current = setTimeout(() => setIsPillIdle(true), 2000);
-        }}
-        onTouchStart={() => {
-          setIsPillIdle(false);
-          if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
-          idleTimeoutRef.current = setTimeout(() => setIsPillIdle(true), 2000);
-        }}
+        onPointerDown={bumpPillActive}
+        onPointerEnter={bumpPillActive}
+        onTouchStart={bumpPillActive}
       >
         {/* #-shaped frame: horizontal + vertical rules slightly past the image */}
         <div

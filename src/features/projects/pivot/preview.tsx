@@ -7,7 +7,7 @@ export function PivotProjectPreview() {
   return (
     <Link
       href="/projects/pivot"
-      className="group/pivot relative mb-8 block overflow-hidden bg-cyan-500/8 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="project-card group/pivot relative mb-8 block overflow-hidden bg-cyan-500/8 outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="relative aspect-video w-full">
         <Image

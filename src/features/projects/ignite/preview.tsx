@@ -7,7 +7,7 @@ export function IgniteProjectPreview() {
   return (
     <Link
       href="/projects/ignite"
-      className="group/ignite relative mb-8 block overflow-hidden bg-amber-500/8 outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="project-card group/ignite relative mb-8 block overflow-hidden bg-amber-500/8 outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="relative aspect-video w-full">
         <Image

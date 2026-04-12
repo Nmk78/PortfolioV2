@@ -48,7 +48,8 @@ export default function Contact() {
     >
       <header className="relative mb-16 flex flex-col items-center text-center lg:items-start lg:text-left">
         <h1 className="contact-title mb-6 font-sans text-[5rem] font-black leading-none tracking-tighter text-foreground opacity-90 md:text-[8rem] lg:text-[10rem]">
-          HELLO.
+          HELLO
+          <span className="animate-pulse">.</span>
         </h1>
         <p className="contact-animate font-sans text-2xl font-normal leading-tight text-theme-muted transition-ui md:text-4xl lg:max-w-4xl">
           Have an idea or a project in mind? Let&apos;s build something{" "}
@@ -117,7 +118,7 @@ export default function Contact() {
                   Response
                 </p>
                 <p className="text-lg font-semibold text-foreground">
-                  Usually within 24 hours
+                  Within 24 hours
                 </p>
               </div>
             </div>
@@ -125,7 +126,7 @@ export default function Contact() {
         </div>
       </section>
 
-      <div className="relative z-10 mx-auto max-w-5xl space-y-10">
+      <div id="contact" className="relative z-10 mx-auto max-w-5xl space-y-10">
         <p className="contact-animate text-center font-mono text-sm leading-relaxed text-theme-muted lg:text-left">
           For a quick anonymous note to Telegram, use the site chat (bottom
           bar) → <span className="font-semibold text-foreground">Message</span>{" "}
@@ -133,7 +134,7 @@ export default function Contact() {
           your Telegram username.
         </p>
 
-        <div id="contact" className="contact-animate border-t border-foreground/15">
+        <div className="contact-animate border-t border-foreground/15">
           <MagneticLink className="w-full">
             <a
               href="mailto:naymyokhant78@gmail.com"

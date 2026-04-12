@@ -8,7 +8,7 @@ export function NoteProjectPreview() {
   return (
     <Link
       href="/projects/note"
-      className="group/note relative mb-8 block overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="project-card group/note relative mb-8 block overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <div className="relative aspect-video w-full">
         <Image

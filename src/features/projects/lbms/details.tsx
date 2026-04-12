@@ -22,6 +22,7 @@ import {
 import { Github } from "@/components/ui/Icons";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { cn } from "@/lib/utils";
+import { externalLinkProps } from "@/lib/url";
 
 const STACK = [
   "Java",
@@ -211,6 +212,7 @@ export function LbmsProjectPage() {
             <a
               className="inline-flex min-h-11 items-center gap-2 border border-emerald-500/55 bg-emerald-500/15 px-4 py-2.5 font-mono text-[10px] font-bold tracking-[0.16em] text-emerald-100 no-underline uppercase transition-colors hover:border-emerald-400/80 hover:bg-emerald-500/30"
               href={LINKS.github}
+              {...externalLinkProps(LINKS.github)}
             >
               <Github className="h-3.5 w-3.5 opacity-90" />
               View code
@@ -218,6 +220,7 @@ export function LbmsProjectPage() {
             <a
               className="inline-flex min-h-11 items-center gap-2 border border-slate-400/50 bg-slate-900/60 px-4 py-2.5 font-mono text-[10px] font-bold tracking-[0.16em] text-slate-100 no-underline uppercase transition-colors hover:border-slate-300/70 hover:bg-slate-800/70"
               href={LINKS.live}
+              {...externalLinkProps(LINKS.live)}
             >
               <ExternalLink className="h-3.5 w-3.5 opacity-80" />
               Live demo
@@ -421,6 +424,7 @@ export function LbmsProjectPage() {
           <a
             className="inline-flex min-h-11 items-center gap-2 border border-emerald-500/55 bg-emerald-500/15 px-4 py-2.5 font-mono text-[10px] font-bold tracking-[0.16em]  no-underline uppercase transition-colors hover:border-emerald-400/80 hover:bg-emerald-500/30"
             href={LINKS.github}
+            {...externalLinkProps(LINKS.github)}
           >
             <Github className="h-3.5 w-3.5 opacity-90" />
             View code
@@ -428,6 +432,7 @@ export function LbmsProjectPage() {
           <a
             className="inline-flex min-h-11 items-center gap-2 border border-slate-400/50 bg-slate-900/60 px-4 py-2.5 font-mono text-[10px] font-bold tracking-[0.16em] text-slate-100 no-underline uppercase transition-colors hover:border-slate-300/70 hover:bg-slate-800/70"
             href={LINKS.live}
+            {...externalLinkProps(LINKS.live)}
           >
             <ExternalLink className="h-3.5 w-3.5 opacity-80" />
             Live demo

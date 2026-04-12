@@ -8,13 +8,10 @@ import { PixelRevealPortrait } from "@/components/ui/PixelRevealPortrait";
 import { useEmployerMode } from "@/components/ui/employer-mode-provider";
 import type { HeroSegment } from "@/content/portfolio-identity";
 import { heroEmployer, heroNormal } from "@/content/portfolio-identity";
+import { externalLinkProps } from "@/lib/url";
 
 const heroExternalLinkClass =
   "font-semibold text-primary underline decoration-primary/45 underline-offset-[3px] transition-ui hover:decoration-primary focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
-
-function isExternalHref(href: string) {
-  return href.startsWith("http://") || href.startsWith("https://");
-}
 
 function HeroInlineSegments({
   segments,
@@ -30,9 +27,7 @@ function HeroInlineSegments({
           <a
             key={`${part.href}-${i}`}
             href={part.href}
-            {...(isExternalHref(part.href)
-              ? { target: "_blank" as const, rel: "noopener noreferrer" }
-              : {})}
+            {...externalLinkProps(part.href)}
             className={heroExternalLinkClass}
           >
             {part.label}

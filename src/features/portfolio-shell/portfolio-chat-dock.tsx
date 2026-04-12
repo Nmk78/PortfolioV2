@@ -510,7 +510,20 @@ export function PortfolioChatDock() {
       if (isComposerField && !target.closest("[data-chat-messages]")) return;
     }
 
+    /** Wheel over the message list: overflow-y-auto handles scroll (see Lenis allowNestedScroll). */
+    if (target instanceof Element && target.closest("[data-chat-messages]")) {
+      return;
+    }
+
     if (messagesEl.scrollHeight <= messagesEl.clientHeight) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = messagesEl;
+    const deltaY = event.deltaY;
+    const atTop = scrollTop <= 0;
+    const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+    if (deltaY < 0 && atTop) return;
+    if (deltaY > 0 && atBottom) return;
 
     event.preventDefault();
     messagesEl.scrollTop += event.deltaY;

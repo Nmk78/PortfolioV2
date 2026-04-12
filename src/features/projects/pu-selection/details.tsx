@@ -23,6 +23,7 @@ import {
 import { Github } from "@/components/ui/Icons";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { cn } from "@/lib/utils";
+import { externalLinkProps } from "@/lib/url";
 import styles from "./pu-selection-case-study.module.css";
 
 const STACK = [
@@ -280,11 +281,15 @@ export function PuSelectionProjectPage() {
           </p>
 
           <div className="flex flex-wrap gap-3 pt-1">
-            <a className={styles.ctaPrimary} href={LINKS.github}>
+            <a
+              className={styles.ctaPrimary}
+              href={LINKS.github}
+              {...externalLinkProps(LINKS.github)}
+            >
               <Github className="h-3.5 w-3.5 opacity-90" />
               View code
             </a>
-            <a className={styles.ctaGhost} href={LINKS.live}>
+            <a className={styles.ctaGhost} href={LINKS.live} {...externalLinkProps(LINKS.live)}>
               <ExternalLink className="h-3.5 w-3.5 opacity-80" />
               Live demo
             </a>
@@ -490,11 +495,15 @@ export function PuSelectionProjectPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <a className={styles.ctaPrimary} href={LINKS.github}>
+          <a
+            className={styles.ctaPrimary}
+            href={LINKS.github}
+            {...externalLinkProps(LINKS.github)}
+          >
             <Github className="h-3.5 w-3.5 opacity-90" />
             View code
           </a>
-          <a className={styles.ctaGhost} href={LINKS.live}>
+          <a className={styles.ctaGhost} href={LINKS.live} {...externalLinkProps(LINKS.live)}>
             <ExternalLink className="h-3.5 w-3.5 opacity-80" />
             Live demo
           </a>
