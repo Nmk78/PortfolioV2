@@ -52,16 +52,53 @@ function getTimeoutMs(): number {
   return Math.min(Math.max(Math.floor(raw), 1_000), 30_000);
 }
 
-async function checkEndpoint(url: string, timeoutMs: number): Promise<{ ok: true } | { ok: false; reason: string }> {
+function pathnameForProbe(url: string): string {
+  try {
+    return new URL(url).pathname.replace(/\/$/, "") || "/";
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * POST-only APIs (e.g. /api/rag/query) return 405 for GET — use method/body that matches the route.
+ * /api/monitor/alert exposes GET for lightweight probes (no Telegram); POST still sends alerts.
+ */
+async function checkEndpoint(
+  url: string,
+  timeoutMs: number,
+  monitorSecret: string,
+): Promise<{ ok: true } | { ok: false; reason: string }> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  try {
-    const response = await fetch(url, {
+  const path = pathnameForProbe(url);
+  const headers = new Headers({ "cache-control": "no-store" });
+
+  let init: RequestInit = {
+    method: "GET",
+    cache: "no-store",
+    signal: controller.signal,
+    headers,
+  };
+
+  if (path === "/api/rag/query") {
+    init = {
+      ...init,
+      method: "POST",
+      headers: new Headers({ "content-type": "application/json" }),
+      body: JSON.stringify({ query: "heartbeat" }),
+    };
+  } else if (path === "/api/monitor/alert") {
+    init = {
+      ...init,
       method: "GET",
-      cache: "no-store",
-      signal: controller.signal,
-    });
+      headers: new Headers({ "x-monitor-secret": monitorSecret }),
+    };
+  }
+
+  try {
+    const response = await fetch(url, init);
     if (!response.ok) return { ok: false, reason: `HTTP ${response.status}` };
     return { ok: true };
   } catch (error) {
@@ -96,7 +133,7 @@ export async function GET(request: NextRequest) {
   const failures: string[] = [];
   for (const endpoint of configuredEndpoints) {
     const url = toAbsoluteUrl(origin, endpoint);
-    const result = await checkEndpoint(url, timeoutMs);
+    const result = await checkEndpoint(url, timeoutMs, monitorSecret);
     if (!result.ok) failures.push(`${endpoint} -> ${result.reason}`);
   }
 

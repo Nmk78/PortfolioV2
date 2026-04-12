@@ -45,7 +45,7 @@ export default function Home() {
   );
 
   return (
-    <div className="w-full texture-dots space-y-5 pb-24 md:space-y-7 md:pb-32 lg:space-y-8 lg:pb-36 employer-mode-surface">
+    <div className="w-full texture-dots space-y-5 pb-10 md:space-y-7 md:pb-10 lg:space-y-8 lg:pb-16 employer-mode-surface">
       <HomeScrollEffects />
       <HeroSection />
       <TechStacksSection />

@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Documentation
+
+- **[Product Requirements (PRD)](docs/PRD.md)** — goals, scope, requirements, success metrics  
+- **[Architecture](docs/architecture.md)** — system context, components, flows  
+- **[Architecture Decision Records](docs/adr/README.md)** — key technical decisions  
+
 ## Getting Started
 
 Install dependencies (this repo uses [Bun](https://bun.sh) as the package manager):

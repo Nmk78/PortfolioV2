@@ -92,6 +92,7 @@ describe("POST /api/rag/query", () => {
       success: true,
       result: {
         query: "ignite summary",
+        effectiveTopK: 3,
         count: 1,
         matches: [
           {

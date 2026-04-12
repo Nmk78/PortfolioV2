@@ -63,7 +63,7 @@ function ProjectLinkBlock({
   return (
     <>
       {mobileImage ? (
-        <div className="mb-10 h-full relative">
+        <div className="relative mb-10 h-full w-[calc(100%+2rem)] -mx-4 sm:w-[calc(100%+3rem)] sm:-mx-6">
           {/* #-shaped frame: horizontal + vertical rules slightly past the image */}
           <div
             aria-hidden
@@ -94,7 +94,7 @@ function ProjectLinkBlock({
 
             <Link
               href={item.href}
-              className="group flex flex-col z-20 w-full cursor-pointer p-2"
+              className="group z-20 flex w-full cursor-pointer flex-col px-4 py-2 sm:px-6"
               onMouseEnter={onActivate}
               onFocus={onActivate}
             >
@@ -447,8 +447,7 @@ export function ProjectShowcaseSection() {
 
   return (
     <section
-      id="about"
-      className="scroll-shrink-section relative py-10 md:py-14 lg:py-16"
+      className="scroll-shrink-section relative py-10 md:py-10 lg:py-10"
       aria-labelledby="project-showcase-heading"
     >
       <div

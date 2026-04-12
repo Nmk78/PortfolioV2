@@ -21,6 +21,14 @@ function isAuthorized(request: NextRequest): boolean {
   return providedSecret === expectedSecret;
 }
 
+/** Lightweight probe for heartbeat/cron (no Telegram). POST still sends alerts. */
+export async function GET(request: NextRequest) {
+  const monitorSecret = process.env.MONITOR_ALERT_SECRET?.trim();
+  if (!monitorSecret || !isAuthorized(request)) return jsonError("Unauthorized.", 401);
+
+  return NextResponse.json({ success: true as const, probe: true as const });
+}
+
 export async function POST(request: NextRequest) {
   const monitorSecret = process.env.MONITOR_ALERT_SECRET?.trim();
   if (!monitorSecret || !isAuthorized(request)) return jsonError("Unauthorized.", 401);

@@ -130,7 +130,7 @@ export function HeroSection() {
           <div className="hidden md:flex flex-col gap-3 sm:flex-row ">
             <MagneticLink>
               <Link
-                href="/cv"
+                href="/files/NayMyoKhant_CV.pdf"
                 className="min-h-9 rounded-full bg-foreground px-4 py-2 text-sm font-bold text-background transition-ui hover:opacity-90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Download CV
@@ -161,7 +161,7 @@ export function HeroSection() {
           <div className="flex flex-col md:hidden gap-4 sm:flex-row absolute bottom-15 md:bottom-10">
             <MagneticLink>
               <Link
-                href="/contact"
+                href="/files/NayMyoKhant_CV.pdf"
                 className="rounded-full bg-foreground px-3 py-1.5 text-md font-semibold text-background transition-ui hover:opacity-90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Download CV

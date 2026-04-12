@@ -15,6 +15,7 @@ vi.mock("next/server", () => ({
   },
 }));
 
+let GET: (request: Request) => Promise<Response>;
 let POST: (request: Request) => Promise<Response>;
 
 function createRequest(body: unknown, secret = "") {
@@ -28,11 +29,18 @@ function createRequest(body: unknown, secret = "") {
   });
 }
 
+function createGetRequest(secret = "") {
+  const headers = new Headers();
+  if (secret) headers.set("x-monitor-secret", secret);
+  return new Request("http://localhost/api/monitor/alert", { method: "GET", headers });
+}
+
 describe("POST /api/monitor/alert", () => {
   const originalMonitorSecret = process.env.MONITOR_ALERT_SECRET;
 
   beforeAll(async () => {
     const routeModule = await import("./route");
+    GET = routeModule.GET;
     POST = routeModule.POST;
   });
 
@@ -41,6 +49,22 @@ describe("POST /api/monitor/alert", () => {
     if (originalMonitorSecret === undefined) delete process.env.MONITOR_ALERT_SECRET;
     else process.env.MONITOR_ALERT_SECRET = originalMonitorSecret;
     process.env.MONITOR_ALERT_SECRET = "monitor-secret";
+  });
+
+  it("GET returns 401 when secret header is missing", async () => {
+    const response = await GET(createGetRequest());
+    const data = await response.json();
+
+    expect(response.status).toBe(401);
+    expect(data).toEqual({ success: false, error: "Unauthorized." });
+  });
+
+  it("GET returns probe when authorized", async () => {
+    const response = await GET(createGetRequest("monitor-secret"));
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toEqual({ success: true, probe: true });
   });
 
   it("returns 401 when secret header is missing", async () => {

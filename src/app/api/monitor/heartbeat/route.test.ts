@@ -70,10 +70,13 @@ describe("GET /api/monitor/heartbeat", () => {
 
   it("returns ok when all monitored endpoints are healthy", async () => {
     const mockedFetch = vi.spyOn(globalThis, "fetch").mockImplementation(
-      async (input: RequestInfo | URL) => {
+      async (input: RequestInfo | URL, init?: RequestInit) => {
         const url = String(input);
-        if (url.endsWith("/api/rag/query"))
+        if (url.endsWith("/api/rag/query")) {
+          expect(init?.method).toBe("POST");
+          expect(init?.body).toBe(JSON.stringify({ query: "heartbeat" }));
           return new Response("ok", { status: 200 });
+        }
         return new Response(JSON.stringify({ success: true }), { status: 200 });
       },
     );

@@ -51,7 +51,7 @@ export function StickyScrollReveal({
       <div className="min-w-0">{left}</div>
       <div
         className={cn(
-          "sticky top-0 flex min-h-0 w-full items-center justify-center self-start md:h-screen md:py-10",
+          "sticky top-70 flex min-h-0 w-full items-center justify-center self-start md:h-screen md:pt-10",
           stickyClassName,
         )}
       >

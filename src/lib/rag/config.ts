@@ -24,7 +24,7 @@ export const ragConfig = {
   aiProvider: getAiProvider(),
   pineconeApiKey: () => getRequiredEnv("PINECONE_API_KEY"),
   pineconeIndex: () => getRequiredEnv("PINECONE_INDEX"),
-  openAiApiKey: process.env.OPENAI_API_KEY,
+  requireOpenAiApiKey: () => getRequiredEnv("OPENAI_API_KEY"),
   googleApiKey: () =>
     process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ??
     process.env.GEMINI_API_KEY?.trim() ??
@@ -44,7 +44,11 @@ export const ragConfig = {
       ? DEFAULT_GOOGLE_CHAT_MODEL
       : DEFAULT_OPENAI_CHAT_MODEL),
   defaultNamespace: process.env.PINECONE_NAMESPACE?.trim() || undefined,
-  topK: Number(process.env.RAG_TOP_K ?? DEFAULT_TOP_K),
+  topK: (() => {
+    const n = Number(process.env.RAG_TOP_K ?? DEFAULT_TOP_K);
+    if (!Number.isFinite(n) || n < 1) return DEFAULT_TOP_K;
+    return Math.min(20, Math.floor(n));
+  })(),
   chunkSize: Number(process.env.RAG_CHUNK_SIZE ?? DEFAULT_CHUNK_SIZE),
   chunkOverlap: Number(process.env.RAG_CHUNK_OVERLAP ?? DEFAULT_CHUNK_OVERLAP),
 };
