@@ -118,6 +118,64 @@ export async function ingestDocumentsToRag(params: {
   };
 }
 
+function isRetryablePineconeNetworkError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const name = "name" in error ? String((error as { name?: string }).name) : "";
+  if (name === "PineconeConnectionError") return true;
+  const msg = String(error);
+  if (/Connect Timeout|fetch failed|UND_ERR_CONNECT/i.test(msg)) return true;
+  let current: unknown = error;
+  for (let i = 0; i < 4 && current && typeof current === "object"; i++) {
+    const c = (current as { cause?: unknown }).cause;
+    if (c === undefined) break;
+    if (typeof c === "object" && c !== null && "code" in c) {
+      const code = (c as { code?: string }).code;
+      if (code === "UND_ERR_CONNECT_TIMEOUT") return true;
+    }
+    const s = String(c);
+    if (/Connect Timeout|UND_ERR_CONNECT/i.test(s)) return true;
+    current = c;
+  }
+  return false;
+}
+
+async function queryPineconeWithVector(
+  vector: number[],
+  params: {
+    namespace?: string;
+    topK: number;
+    filter?: RagQueryInput["filter"];
+  },
+): Promise<RagQueryMatch[]> {
+  const run = async () => {
+    const targetIndex = getTargetIndex(params.namespace);
+    const queryResult = await targetIndex.query({
+      vector,
+      topK: params.topK,
+      includeMetadata: true,
+      filter: params.filter,
+    });
+
+    return (queryResult.matches ?? []).map((match) => {
+      const metadata = (match.metadata ?? {}) as RagMetadata;
+      return {
+        id: match.id,
+        score: match.score ?? 0,
+        text: toText(metadata.text),
+        metadata,
+      };
+    });
+  };
+
+  try {
+    return await run();
+  } catch (error) {
+    if (!isRetryablePineconeNetworkError(error)) throw error;
+    await new Promise((r) => setTimeout(r, 500));
+    return await run();
+  }
+}
+
 async function queryRagOnce(params: RagQueryInput): Promise<RagQueryMatch[]> {
   const query = params.query.trim();
   if (!query) return [];
@@ -129,23 +187,45 @@ async function queryRagOnce(params: RagQueryInput): Promise<RagQueryMatch[]> {
     value: query,
   });
 
-  const targetIndex = getTargetIndex(params.namespace);
-  const queryResult = await targetIndex.query({
-    vector: queryEmbedding.embedding,
+  return queryPineconeWithVector(queryEmbedding.embedding, {
+    namespace: params.namespace,
     topK: getEffectiveRagTopK(params.topK),
-    includeMetadata: true,
     filter: params.filter,
   });
+}
 
-  return (queryResult.matches ?? []).map((match) => {
-    const metadata = (match.metadata ?? {}) as RagMetadata;
-    return {
-      id: match.id,
-      score: match.score ?? 0,
-      text: toText(metadata.text),
-      metadata,
-    };
+/**
+ * One embedding per query string, then Pinecone namespace queries **sequentially**.
+ * Parallel queries shared one vector but opened multiple HTTPS connections and led to
+ * connect timeouts (UND_ERR_CONNECT_TIMEOUT) on some networks.
+ */
+async function matchesForSingleQueryText(
+  queryText: string,
+  baseParams: Pick<RagQueryInput, "filter">,
+  topK: number,
+  namespaces: (string | undefined)[],
+): Promise<RagQueryMatch[]> {
+  const q = queryText.trim();
+  if (!q) return [];
+
+  const embeddingModel = getEmbeddingModel();
+  const { embedding } = await embed({
+    model: embeddingModel,
+    value: q,
   });
+
+  const merged: RagQueryMatch[] = [];
+  for (const ns of namespaces) {
+    merged.push(
+      ...(await queryPineconeWithVector(embedding, {
+        namespace: ns,
+        topK,
+        filter: baseParams.filter,
+      })),
+    );
+  }
+
+  return merged;
 }
 
 /** Single-vector query for `/api/rag/query` and tooling. */
@@ -206,26 +286,25 @@ export async function queryRagForChat(
   const namespaces = namespaceAttemptsForChat(params.namespace);
   const primary = params.query.trim();
 
-  async function runQueries(queries: string[]): Promise<RagQueryMatch[]> {
+  async function mergeQueryRuns(queryStrings: string[]): Promise<RagQueryMatch[]> {
+    const trimmed = queryStrings.map((s) => s.trim()).filter(Boolean);
+    if (trimmed.length === 0) return [];
+
     const merged: RagQueryMatch[] = [];
-    for (const q of queries) {
-      for (const ns of namespaces) {
-        merged.push(
-          ...(await queryRagOnce({ ...params, query: q, namespace: ns, topK })),
-        );
-      }
+    for (const q of trimmed) {
+      merged.push(...(await matchesForSingleQueryText(q, params, topK, namespaces)));
     }
     const deduped = mergeMatchesByMaxScore(merged);
     deduped.sort((a, b) => b.score - a.score);
     return deduped.slice(0, topK);
   }
 
-  const first = await runQueries([primary]);
+  const first = await mergeQueryRuns([primary]);
   if (first.length > 0) return first;
 
   if (!EDUCATION_RETRIEVAL_RE.test(params.query)) return first;
 
-  return await runQueries([
+  return await mergeQueryRuns([
     `${primary} education university academic background degree studies`,
     "education academic background university degree semester studies polytechnic",
   ]);

@@ -83,7 +83,7 @@ PortfolioV2 is a **marketing and credibility** product: a fast, accessible web e
 |----|-------------|----------|
 | R-1 | **Ingest:** Accept documents with text and metadata; chunk, embed, upsert to configured index/namespace. | P0 |
 | R-2 | **Query:** Semantic search returns ranked chunks with scores and metadata. | P0 |
-| R-3 | **Chat:** Streaming response uses retrieved context; configurable models (OpenAI / Google). | P0 |
+| R-3 | **Chat:** Streaming response uses retrieved context; configurable models (Groq / OpenAI / Google). | P0 |
 | R-4 | Read paths respect rate limits appropriate for public exposure. | P1 |
 
 ### 4.4 SEO & AI crawler hints

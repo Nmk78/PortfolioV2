@@ -5,7 +5,6 @@ import {
   type KeyboardEvent,
   type WheelEvent as ReactWheelEvent,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -15,11 +14,47 @@ import { RAG_EMPTY_REPLY_FALLBACK } from "@/lib/rag/provider-errors";
 
 export type ChatDockMode = "assistant" | "recruiter" | "direct";
 
-const TELEGRAM_USERNAME_RE = /^[a-zA-Z0-9_]{5,32}$/;
-
 function normalizeTelegramUsername(raw: string): string {
   const s = raw.trim();
   return s.startsWith("@") ? s.slice(1) : s;
+}
+
+/** First valid @handle in the text (5–32 chars, Telegram rules). */
+const TG_HANDLE_IN_MESSAGE = /@([a-zA-Z0-9_]{5,32})\b/;
+
+let messageResponse = "Message sent.";
+function parseDirectMessageForTelegram(raw: string):
+  | { ok: true; message: string; replyRequested: boolean; telegramUsername: string }
+  | { ok: false; error: string } {
+  const trimmed = raw.trim();
+  if (!trimmed) return { ok: false, error: "Message is empty." };
+
+  const match = trimmed.match(TG_HANDLE_IN_MESSAGE);
+  const replyRequested = Boolean(match);
+  const telegramUsername = match ? normalizeTelegramUsername(match[1]!) : "";
+
+  let message = trimmed;
+  if (match) {
+
+    messageResponse = `Message sent — I'll get back to you when I can. @${telegramUsername}`;
+    message = trimmed.replace(match[0], "").trim();
+    message = message.replace(/\n{3,}/g, "\n\n").trim();
+  }
+
+  if (!message) {
+    return {
+      ok: false,
+      error:
+        "Write your note in the message. Add @YourTelegramUsername if you want a reply on Telegram.",
+    };
+  }
+
+  return {
+    ok: true,
+    message,
+    replyRequested,
+    telegramUsername,
+  };
 }
 
 const ASSISTANT_INTRO =
@@ -28,7 +63,7 @@ const RECRUITER_INTRO =
   "Recruiter mode is active. Paste a JD for a concise fit summary, strengths, and gaps.";
 
 const DIRECT_INTRO =
-  "Anonymous message — delivered to my Telegram. No name or email. Toggle Reply me if you want a response there.";
+  "Anonymous message — delivered to my Telegram. Add @YourTelegramUsername anywhere in your message if you want a reply there; otherwise it stays one-way.";
 
 const RAG_TOP_K = 10;
 
@@ -56,26 +91,21 @@ export function PortfolioChatDock() {
   const [isSendingChat, setIsSendingChat] = useState(false);
   const [isSendingDirect, setIsSendingDirect] = useState(false);
   const [isDockExpanded, setIsDockExpanded] = useState(false);
-  const chatDockRootRef = useRef<HTMLDivElement>(null);
   const composerTextareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const shouldAutoScrollRef = useRef(true);
 
-  const [replyMe, setReplyMe] = useState(false);
-  const [telegramUsername, setTelegramUsername] = useState("");
+  const initialChatMessage = isEmployerMode
+    ? { role: "assistant", content: RECRUITER_INTRO }
+    : { role: "assistant", content: ASSISTANT_INTRO };
 
   const [chatMessages, setChatMessages] = useState<
     Array<{ role: "user" | "assistant"; content: string }>
-  >([
-    { role: "assistant", content: ASSISTANT_INTRO },
-    { role: "assistant", content: RECRUITER_INTRO },
-  ]);
+  >([initialChatMessage as { role: "user" | "assistant"; content: string }]);
 
   const [directMessages, setDirectMessages] = useState<
     Array<{ role: "user" | "assistant"; content: string }>
   >([{ role: "assistant", content: DIRECT_INTRO }]);
-
-  const [formError, setFormError] = useState<string | null>(null);
 
   /** Navbar / mobile pill recruiter toggle stays in sync with dock. */
   useEffect(() => {
@@ -92,34 +122,6 @@ export function PortfolioChatDock() {
       setIsDockExpanded(true);
     }
   }, [dockMode]);
-
-  /** Collapse when clicking outside the dock (panel + collapsed bar share one root). */
-  useEffect(() => {
-    if (!isDockExpanded) return;
-    function handlePointerDown(event: PointerEvent) {
-      const root = chatDockRootRef.current;
-      const target = event.target;
-      if (!root || !(target instanceof Node)) return;
-      if (root.contains(target)) return;
-      setIsDockExpanded(false);
-    }
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [isDockExpanded]);
-
-  /** Escape closes the expanded panel. */
-  useEffect(() => {
-    if (!isDockExpanded) return;
-    function handleKeyDown(event: Event) {
-      if (!(event instanceof KeyboardEvent)) return;
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setIsDockExpanded(false);
-      }
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isDockExpanded]);
 
   /** Prevent page scroll behind the expanded dock. */
   useEffect(() => {
@@ -146,9 +148,7 @@ export function PortfolioChatDock() {
   function setMode(next: ChatDockMode) {
     setDockMode(next);
     setEmployerMode(next === "recruiter");
-    setFormError(null);
   }
-
 
   async function submitChatMessage() {
     const prompt = chatInput.trim();
@@ -249,7 +249,6 @@ export function PortfolioChatDock() {
   async function submitRecruiterAnalysis() {
     const jd = jdInput.trim();
     if (!jd || isSendingChat) return;
-
 
     const recruiterPrompt = `Analyze this job description for candidate fit. Keep it concise and impressive for recruiter review. Return: 1) fit summary, 2) strongest matching evidence, 3) likely gaps, 4) recommended interview focus.\n\nJob Description:\n${jd}`;
 
@@ -352,26 +351,19 @@ export function PortfolioChatDock() {
   }
 
   async function submitDirectMessage() {
-    const message = directInput.trim();
-    if (!message || isSendingDirect) return;
+    const raw = directInput.trim();
+    if (!raw || isSendingDirect) return;
 
-    let tgUser = "";
-    if (replyMe) {
-      tgUser = normalizeTelegramUsername(telegramUsername);
-      if (!tgUser) {
-        setFormError("Add your Telegram username, or turn off Reply me.");
-        return;
-      }
-      if (!TELEGRAM_USERNAME_RE.test(tgUser)) {
-        setFormError(
-          "Invalid Telegram username (5–32 letters, numbers, underscores).",
-        );
-        return;
-      }
+    const parsed = parseDirectMessageForTelegram(raw);
+    if (!parsed.ok) {
+      setDirectMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: parsed.error },
+      ]);
+      return;
     }
-    setFormError(null);
 
-    setDirectMessages((prev) => [...prev, { role: "user", content: message }]);
+    setDirectMessages((prev) => [...prev, { role: "user", content: raw }]);
     setDirectInput("");
     setIsSendingDirect(true);
 
@@ -380,9 +372,11 @@ export function PortfolioChatDock() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message,
-          replyRequested: replyMe,
-          ...(replyMe ? { telegramUsername: tgUser } : {}),
+          message: parsed.message,
+          replyRequested: parsed.replyRequested,
+          ...(parsed.replyRequested
+            ? { telegramUsername: parsed.telegramUsername }
+            : {}),
         }),
       });
       const data = (await res.json()) as { success?: boolean; error?: string };
@@ -400,11 +394,9 @@ export function PortfolioChatDock() {
         ...prev,
         {
           role: "assistant",
-          content: "Message sent — I'll get back to you when I can.",
+          content: messageResponse,
         },
       ]);
-      setFormError(null);
-      if (replyMe) setTelegramUsername("");
     } catch {
       setDirectMessages((prev) => [
         ...prev,
@@ -463,7 +455,7 @@ export function PortfolioChatDock() {
     dockMode === "recruiter"
       ? "Paste a JD for a direct fit analysis with recruiter mode."
       : dockMode === "direct"
-        ? "Anonymous — no account. Delivered to Telegram."
+        ? "Anonymous — no account. Include @username in your text if you want a Telegram reply."
         : "Ask about work, stack, or projects — replies show above.";
 
   const composerValue =
@@ -483,7 +475,7 @@ export function PortfolioChatDock() {
     dockMode === "recruiter"
       ? "Paste the full job description here…"
       : dockMode === "direct"
-        ? "Your message… Enter to send, Shift+Enter for a new line"
+        ? "Your message… add @username for a reply. Enter sends."
         : "Ask about projects or stack — Enter sends, Shift+Enter for a new line";
 
   const sendDisabled =
@@ -536,7 +528,6 @@ export function PortfolioChatDock() {
       : dockMode === "direct"
         ? "Direct message"
         : "Message — Enter to send, Shift+Enter for new line";
-
 
   const composerForm = (
     <form
@@ -593,10 +584,7 @@ export function PortfolioChatDock() {
   );
 
   return (
-    <div
-      ref={chatDockRootRef}
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex w-[min(700px,calc(100%-1.5rem))] max-w-5xl flex-col gap-2"
-    >
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex w-[min(700px,calc(100%-1.5rem))] max-w-5xl flex-col gap-2">
       {isDockExpanded && (
         <div
           onWheelCapture={handlePanelWheel}
@@ -659,65 +647,6 @@ export function PortfolioChatDock() {
               </div>
             </div>
 
-            {dockMode === "direct" && (
-              <div className="mb-4 flex gap-3 border-b ml-auto border-foreground/10 pb-4 flex-row items-center justify-end">
-                {/* <span
-                  id="dock-reply-label"
-                  className="font-mono text-[10px] font-bold uppercase tracking-widest text-theme-subtle"
-                >
-                  Reply me
-                </span> */}
-                <div className="flex flex-row items-center gap-3">
-                  <div className="flex min-w-0 max-w-56 items-center gap-1 rounded-lg border border-foreground/12 bg-background/60 px-2 py-1.5">
-                    <span className="shrink-0 font-mono text-xs text-theme-muted">
-                      @
-                    </span>
-                    <input
-                      type="text"
-                      readOnly={!replyMe}
-                      value={telegramUsername}
-                      onFocus={() => {
-                        if (!replyMe) {
-                          setReplyMe(true);
-                          setFormError(null);
-                        }
-                      }}
-                      onChange={(e) =>
-                        setTelegramUsername(e.target.value.replace(/\s/g, ""))
-                      }
-                      placeholder="telegram username"
-                      className={`min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-theme-subtle ${!replyMe ? "cursor-pointer opacity-60" : ""}`}
-                      autoComplete="username"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={replyMe}
-                    aria-labelledby="dock-reply-label"
-                    onClick={() => {
-                      setReplyMe((v) => {
-                        const next = !v;
-                        if (!next) setTelegramUsername("");
-                        return next;
-                      });
-                      setFormError(null);
-                    }}
-                    className={`recruiter-switch cursor-pointer shrink-0 border-0 p-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${replyMe ? "is-on" : ""}`}
-                  />
-                </div>
-              </div>
-            )}
-
-            {formError && dockMode === "direct" ? (
-              <p
-                className="mb-2 text-sm text-red-600 dark:text-red-400"
-                role="alert"
-              >
-                {formError}
-              </p>
-            ) : null}
-
             <div
               className="relative flex flex-col overflow-hidden rounded-xl border border-foreground/12 bg-secondary/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] dark:bg-secondary/15 dark:shadow-none"
               aria-live="polite"
@@ -749,11 +678,11 @@ export function PortfolioChatDock() {
                       <div
                         className={
                           isUser
-                            ? "max-w-[min(92%,24rem)] rounded-2xl rounded-br-md border border-primary/25 bg-linear-to-br from-primary to-primary/88 px-3.5 py-2.5 text-sm leading-relaxed text-primary-foreground shadow-[0_6px_20px_rgba(59,130,246,0.28)]"
+                            ? "max-w-[min(92%,24rem)] rounded-2xl rounded-br-sm bg-primary/80 px-3.5 py-2.5 text-sm leading-relaxed text-primary-foreground shadow-[0_6px_20px_rgba(59,130,246,0.28)]"
                             : "max-w-[min(95%,26rem)] rounded-2xl rounded-bl-md border border-foreground/12 bg-background/95 px-3.5 py-2.5 text-sm leading-relaxed text-foreground shadow-sm ring-1 ring-foreground/4 dark:bg-background/90"
                         }
                       >
-                        <p className="whitespace-pre-wrap wrap-break-word">
+                        <p className={`whitespace-pre-wrap wrap-break-word ${isUser ? "text-white" : "text-foreground"}`}>
                           {message.content}
                         </p>
                       </div>
@@ -762,8 +691,7 @@ export function PortfolioChatDock() {
                 })}
                 {isThinking &&
                 (dockMode === "direct" ||
-                  panelMessages[panelMessages.length - 1]?.role ===
-                    "user") ? (
+                  panelMessages[panelMessages.length - 1]?.role === "user") ? (
                   <div className="flex min-w-0 flex-col items-start gap-1.5">
                     <span className="px-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-theme-muted">
                       {dockMode === "direct" ? "Delivery" : "Assistant"}
@@ -774,9 +702,7 @@ export function PortfolioChatDock() {
                         <span className="h-1 w-1 motion-safe:animate-bounce rounded-full bg-foreground/35 [animation-delay:-0.1s]" />
                         <span className="h-1 w-1 motion-safe:animate-bounce rounded-full bg-foreground/35" />
                       </span>
-                      <span className="tabular-nums">
-                        {dockMode === "direct" ? "Sending…" : ""}
-                      </span>
+
                     </div>
                   </div>
                 ) : null}

@@ -53,14 +53,17 @@ PINECONE_INDEX=...
 Optional:
 
 ```bash
-RAG_AI_PROVIDER=openai # openai | google
-OPENAI_API_KEY=...
-GOOGLE_GENERATIVE_AI_API_KEY=... # or GEMINI_API_KEY
-RAG_EMBEDDING_MODEL=...
+RAG_AI_PROVIDER=groq # groq (default) | openai | google
+RAG_EMBEDDING_PROVIDER=openai # openai (default) | google — set google to use Gemini embeddings (e.g. with Groq chat)
+GROQ_API_KEY=... # required when RAG_AI_PROVIDER=groq (chat)
+OPENAI_API_KEY=... # required when RAG_EMBEDDING_PROVIDER=openai; also used for openai chat
+GOOGLE_GENERATIVE_AI_API_KEY=... # or GEMINI_API_KEY — required when using Google for chat or embeddings
+RAG_EMBEDDING_MODEL=... # overrides per-provider defaults below
 RAG_CHAT_MODEL=...
-OPENAI_EMBEDDING_MODEL=text-embedding-3-small # provider-specific fallback
+GROQ_CHAT_MODEL=llama-3.3-70b-versatile # provider-specific fallback when using Groq
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small # used when RAG_EMBEDDING_PROVIDER=openai
 OPENAI_CHAT_MODEL=gpt-4o-mini # provider-specific fallback
-GOOGLE_EMBEDDING_MODEL=gemini-embedding-001 # provider-specific fallback
+GOOGLE_EMBEDDING_MODEL=gemini-embedding-2-preview # used when RAG_EMBEDDING_PROVIDER=google (match Pinecone index dimensions to the model)
 GOOGLE_CHAT_MODEL=gemini-2.5-flash # provider-specific fallback
 PINECONE_NAMESPACE=default
 RAG_TOP_K=6

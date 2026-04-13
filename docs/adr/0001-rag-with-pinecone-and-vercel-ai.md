@@ -10,7 +10,7 @@ The portfolio should support **grounded Q&A** over curated text (bio, project de
 
 ## Decision
 
-Use **Pinecone** for vector storage and **Vercel AI SDK** (`ai`) for embeddings and chat completion, with **OpenAI or Google** models selected via `RAG_AI_PROVIDER` and related env vars. Documents are **chunked** server-side with configurable size/overlap, then upserted with metadata for optional filtering.
+Use **Pinecone** for vector storage and **Vercel AI SDK** (`ai`) for embeddings and chat completion, with **Groq (default), OpenAI, or Google** models selected via `RAG_AI_PROVIDER` and related env vars. **Groq** supplies chat only. **Embeddings** use **OpenAI** or **Gemini** via `RAG_EMBEDDING_PROVIDER` (default follows the chat provider: Gemini when `RAG_AI_PROVIDER=google`, otherwise OpenAI). Documents are **chunked** server-side with configurable size/overlap, then upserted with metadata for optional filtering.
 
 ## Consequences
 

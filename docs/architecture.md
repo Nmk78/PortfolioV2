@@ -21,7 +21,7 @@ flowchart LR
 
   subgraph third [Third parties]
     PC[(Pinecone)]
-    OAI[OpenAI / Google AI]
+    OAI[Groq / OpenAI / Google AI]
     TG[Telegram API]
     VA[Vercel Analytics]
   end
@@ -35,7 +35,7 @@ flowchart LR
   Browser --> VA
 ```
 
-**Narrative:** The browser consumes mostly **static and server-rendered** React from Next.js. **Mutations and AI** run in **Route Handlers** on the server. **Embeddings and retrieval** use **Pinecone**; **generation** uses the **Vercel AI SDK** with OpenAI or Google models. Contact flows may call **Telegram**. There is **no application database** in the default stack—content lives in the repo; vectors live in Pinecone when RAG is enabled.
+**Narrative:** The browser consumes mostly **static and server-rendered** React from Next.js. **Mutations and AI** run in **Route Handlers** on the server. **Embeddings and retrieval** use **Pinecone**; **generation** uses the **Vercel AI SDK** with Groq (default), OpenAI, or Google models. Contact flows may call **Telegram**. There is **no application database** in the default stack—content lives in the repo; vectors live in Pinecone when RAG is enabled.
 
 ---
 
@@ -91,7 +91,7 @@ flowchart LR
 
 ## 5. Security and operations
 
-- **Secrets:** `PINECONE_*`, `OPENAI_API_KEY`, `GOOGLE_GENERATIVE_AI_API_KEY` / `GEMINI_API_KEY`, Telegram tokens — **server-only**, never exposed in client bundles.
+- **Secrets:** `PINECONE_*`, `GROQ_API_KEY` (when using Groq for chat), `OPENAI_API_KEY` (embeddings and/or OpenAI chat), `GOOGLE_GENERATIVE_AI_API_KEY` / `GEMINI_API_KEY`, Telegram tokens — **server-only**, never exposed in client bundles.
 - **Rate limiting:** Applied on sensitive routes (contact, RAG read paths) using in-memory or project-specific helpers; tune for serverless multi-instance behavior if needed.
 - **Abuse:** Contact route uses keyword blocks and length limits; extend via env configuration where supported.
 - **Observability:** Heartbeat/alert routes support external uptime checks; pair with Vercel logs and analytics for full picture.
