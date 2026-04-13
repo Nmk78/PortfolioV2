@@ -70,7 +70,7 @@ export default function Contact() {
               About
             </p>
             <h2 className="max-w-3xl text-balance font-sans text-4xl font-black leading-[0.95] tracking-tight text-foreground md:text-6xl">
-              I build interfaces that feel sharp, fast, and unmistakably human.
+              I build systems that feel sharp, fast, and unmistakably human.
             </h2>
             <div className="space-y-4">
               {storyParagraphs.map((paragraph) => (

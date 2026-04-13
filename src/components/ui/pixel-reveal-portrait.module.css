@@ -12,7 +12,7 @@
 }
 
 :global(.dark) .wrapper {
-  --portrait-filter: invert(1) grayscale(1) brightness(0.8) contrast(1.3);
+  --portrait-filter: invert(1) grayscale(1) brightness(0.8) contrast(1.6);
 }
 
 .image {
