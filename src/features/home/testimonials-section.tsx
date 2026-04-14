@@ -12,7 +12,16 @@ const testimonials = [
       "/profiles/JamesWin.webp",
     profileUrl: "https://www.jameswin.capital/",
     profileLabel: "Website",
+  },  {
+    quote:"Ko Nay Myo Khant is a reliable and responsive developer. He takes strong ownership of his work, especially when the team is busy, and consistently helps move tasks forward.He is always willing to learn and improve, and he actively explores new ideas while also learning from others.He has a positive attitude, making him easy to work with. He also makes an effort to acknowledge and support his teammates, which contributes to a healthy and collaborative team environment.",
+    author: "Htet Aung Lin",
+    role: "Frontend Developer",
+    avatar:
+      "/profiles/HtetAungLin.webp",
+    profileUrl: "https://htetaunglin-coder.dev/",
+    profileLabel: "Website",
   },
+  
   // {
   //   quote:
   //     "Strong balance between code quality and UI detail. Communication was clear and implementation was reliable.",
