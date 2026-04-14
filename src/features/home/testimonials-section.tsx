@@ -5,34 +5,34 @@ import { HashFrameLines } from "@/components/ui/Icons";
 const testimonials = [
   {
     quote:
-      "Nay shipped the interface refresh quickly and made it feel much more premium without bloating the app.",
-    author: "Product Lead",
-    role: "SaaS Platform",
+      "Marcus (Nay Myo Khant) has been a highly reliable and disciplined developer. He’s the kind of person who responds fast and gets the work done without excuses. On top of that, he’s always learning—especially when it comes to AI prototyping and keeps improving his skills. Great to work with overall.",
+    author: "James Win",
+    role: "CEO@TalentOs",
     avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=160&h=160&q=80",
-    profileUrl: "https://www.linkedin.com/",
-    profileLabel: "LinkedIn",
+      "/profiles/JamesWin.webp",
+    profileUrl: "https://www.jameswin.capital/",
+    profileLabel: "Website",
   },
-  {
-    quote:
-      "Strong balance between code quality and UI detail. Communication was clear and implementation was reliable.",
-    author: "Engineering Manager",
-    role: "Startup Team",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&h=160&q=80",
-    profileUrl: "https://www.linkedin.com/",
-    profileLabel: "Portfolio",
-  },
-  {
-    quote:
-      "Great execution on responsive behavior and performance. The UX got cleaner and much easier to use.",
-    author: "Client",
-    role: "Portfolio Project",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=160&h=160&q=80",
-    profileUrl: "https://www.linkedin.com/",
-    profileLabel: "Profile",
-  },
+  // {
+  //   quote:
+  //     "Strong balance between code quality and UI detail. Communication was clear and implementation was reliable.",
+  //   author: "Engineering Manager",
+  //   role: "Startup Team",
+  //   avatar:
+  //     "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&h=160&q=80",
+  //   profileUrl: "https://www.linkedin.com/",
+  //   profileLabel: "Portfolio",
+  // },
+  // {
+  //   quote:
+  //     "Great execution on responsive behavior and performance. The UX got cleaner and much easier to use.",
+  //   author: "Client",
+  //   role: "Portfolio Project",
+  //   avatar:
+  //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=160&h=160&q=80",
+  //   profileUrl: "https://www.linkedin.com/",
+  //   profileLabel: "Profile",
+  // },
 ];
 
 export function TestimonialsSection() {
@@ -47,7 +47,7 @@ export function TestimonialsSection() {
           Testimonials
         </h2>
       </div>
-      <div className="grid gap-4 md:grid-cols-3 md:gap-5">
+      <div className="grid gap-4 md:grid-cols-2 md:gap-5">
         {testimonials.map((item) => (
           <article
             key={item.author + item.role}
