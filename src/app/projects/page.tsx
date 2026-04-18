@@ -55,7 +55,7 @@ export default function ProjectsPage() {
   return (
     <div ref={containerRef} className="w-full space-y-24 md:space-y-32">
       <header className="space-y-8 text-center lg:text-left">
-        <h1 className="projects-hero-title font-sans text-6xl font-black uppercase leading-[0.85] tracking-tighter text-foreground opacity-90 mix-blend-difference transition-ui sm:text-7xl md:text-8xl lg:text-9xl">
+        <h1 className="projects-hero-title font-sans text-6xl pt-14 font-black uppercase leading-[0.85] tracking-tighter text-foreground opacity-90 mix-blend-difference transition-ui sm:text-7xl md:text-8xl lg:text-9xl">
           Selected <br />{" "}
           <span className="text-primary opacity-80">Works.</span>
         </h1>

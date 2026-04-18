@@ -11,7 +11,7 @@ export function PivotProjectPreview() {
     >
       <div className="relative aspect-video w-full">
         <Image
-          src="/projects/pivot/app-mockup.webp"
+          src="/projects/pivot/system.webp"
           alt=""
           fill
           className="object-cover object-center transition-transform duration-700 ease-out group-hover/pivot:scale-[1.03] group-focus-visible/pivot:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover/pivot:scale-100"

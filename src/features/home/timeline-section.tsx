@@ -24,7 +24,8 @@ export function TimelineSection({ timelineRows }: TimelineSectionProps) {
       />
 
       <div className="mb-6 md:mb-8">
-        <h2 className="font-display text-[clamp(1.3rem,calc(1.35vw+0.85rem),2.1rem)] font-medium tracking-tight text-foreground">
+        {/* <h2 className=" text-[clamp(1.3rem,calc(1.35vw+0.85rem),2.1rem)] font-medium tracking-tight text-foreground"> */}
+        <h2 className="mt-3 max-w-[18ch] text-pretty text-[clamp(1.85rem,calc(3vw+0.85rem),2.85rem)] font-black leading-[0.95] tracking-[-0.04em] text-foreground md:mt-4">
           Timeline
         </h2>
       </div>

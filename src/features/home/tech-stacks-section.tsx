@@ -5,7 +5,7 @@ export function TechStacksSection() {
   return (
     <section className="scroll-shrink-section rounded-3xl border-0 border-foreground/10 p-5 md:p-7 lg:p-8">
       <h2 className="text-2xl font-black tracking-tight sm:text-3xl md:text-4xl">
-        Tech Stacks
+        Tech Stack
       </h2>
       <p className="text-theme-muted mt-2 max-w-xl text-sm">
         Tools I actually ship with.

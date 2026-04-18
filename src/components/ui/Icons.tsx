@@ -109,8 +109,13 @@ export function TechStackIcon({
       );
     case "Node.js":
       return <Server className={lucideIcon} aria-hidden />;
-    case "Firebase":
-      return <Flame className={lucideIcon} aria-hidden />;
+    case "Docker":
+      return (
+        <BrandImg
+          src="/icons/docker.svg"
+          className={cn("h-6 w-6 object-contain", className)}
+        />
+      );
     case "Convex":
       return (
         <BrandImg
